@@ -11,7 +11,7 @@ public class SBMOrganizer {
     public static void main(String[] args) {
         
         // Llamamos a la vista
-        main ventana = new main();
+        Main ventana = new Main();
         ventana.setVisible(true);
        /* String toName = "smashmadrid-rom2";
         Admin modelo = new Admin("3Eum2ckuPLG7XEni1t4nYwn1qI45IsZZbQlAFPEf");
