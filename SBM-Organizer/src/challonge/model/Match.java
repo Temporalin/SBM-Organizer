@@ -62,6 +62,31 @@ public class Match {
         this.prereqMatchIds = prereqMatchIds;
         this.scores = scores;
     }
+    
+    public Match(Match m, List<MatchScore> s){
+        this.createdAt = m.getCreatedAt();
+        this.groupId = m.getGroupId();
+        this.hasAttachment = m.isHasAttachment();
+        this.id = m.getId();
+        this.identifier = m.getIdentifier();
+        this.loserId = m.getLoserId();
+        this.playerOneId = m.getPlayerOneId();
+        this.playerOneIsPrereqMatchLoser = m.isPlayerOneIsPrereqMatchLoser();
+        this.playerOnePrereqMatchId = m.getPlayerOnePrereqMatchId();
+        this.playerOneVotes = m.getPlayerOneVotes();
+        this.playerTwoId = m.getPlayerTwoId();
+        this.playerTwoIsPrereqMatchLoser = m.isPlayerTwoIsPrereqMatchLoser();
+        this.playerTwoPrereqMatchId = m.getPlayerTwoPrereqMatchId();
+        this.playerTwoVotes = m.getPlayerTwoVotes();
+        this.round = m.getRound();
+        this.startedAt = m.getStartedAt();
+        this.state = m.getState();
+        this.tournamentId = m.getTournamentId();
+        this.updatedAt = m.getUpdatedAt();
+        this.winnerId = m.getWinnerId();
+        this.prereqMatchIds = m.getPrereqMatchIds();
+        this.scores = s;
+    }
 
     public Date getCreatedAt() {
         return createdAt;

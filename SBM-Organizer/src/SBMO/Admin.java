@@ -4,15 +4,18 @@ import java.util.List;
 import java.util.Queue;
 import challonge.model.*;
 import challonge.request.*;
+import java.util.Collections;
 
 /* Hacemos las peticiones a challonge */
 public class Admin {
     private Challonge challonge;
+    private Internal i = new Internal();
     
     public Admin(String api_link) {
         challonge = new Challonge(api_link);
     }
     
+    /* API */
     public List<Match> listaEnfrentamientos(String urlPath) {
         final ListMatchRequest request = new ListMatchRequest.Builder(urlPath).build();
         final List<Match> matches = challonge.listMatches(request);
@@ -26,32 +29,49 @@ public class Admin {
         return participant;
     }
     
+    public void actualizarEnfrentamiento(String urlPath, int matchID, MatchScore ms) {
+        final UpdateMatchRequest request = new UpdateMatchRequest.Builder(urlPath, matchID)
+                .withMatchScores(Collections.singletonList(ms))
+                .doTie(true)
+                .build();
+        final Match match = challonge.updateMatch(request);
+        // *** RETURN?
+    }
+    
+    /* PROPIOS */
+    
+    /* Encapsular #1 */ 
     public String[][] getlistaNombres(Match[] listaIDs, int nSetups){
         
-        Internal i = new Internal();
         String[][] s = new String[nSetups][2];
         
         for(int j=0;j<i.getnSetups();j++){
-            Participant p1 = mostrarParticipante(i.getUrl(), i.getListaSetups()[j].getPlayerOneId());
-            s[j][0] = p1.getName();
-            Participant p2 = mostrarParticipante(i.getUrl(), i.getListaSetups()[j].getPlayerTwoId());
-            s[j][1] = p2.getName();
+            s[j] = returnNombres(i.getEnfrentamientosSetups()[j]);
         }
         
         return s;
     }
     
+    /* Encapsular #1 */
     public String[][] getarrayNombre(Queue<Match> cola){
 
-        Internal i = new Internal();
         String[][] s = new String[cola.size()][2];
         
         for(int j=0;j<cola.size();j++){
-            Participant p1 = mostrarParticipante(i.getUrl(), cola.poll().getPlayerOneId());
-            s[j][0] = p1.getName();
-            Participant p2 = mostrarParticipante(i.getUrl(), cola.poll().getPlayerTwoId());
-            s[j][1] = p2.getName();
+            s[j] = returnNombres(cola.poll());
         }
+        
+        return s;
+    }
+    
+    public String[] returnNombres(Match enfrentamiento){
+        
+        String[] s = new String[2];
+        
+        Participant p1 = mostrarParticipante(i.getUrl(), enfrentamiento.getPlayerOneId());
+        s[0] = p1.getName();
+        Participant p2 = mostrarParticipante(i.getUrl(), enfrentamiento.getPlayerTwoId());
+        s[1] = p2.getName();
         
         return s;
     }
@@ -63,14 +83,6 @@ public class Admin {
     public void obtenerEnfrentamiento(String urlPath, int single_match) {
         final GetMatchRequest request = new GetMatchRequest(urlPath, single_match);
         final Match match = challonge.getMatch(request);
-    }
-
-    public void actualizarEnfrentamiento() {
-        final UpdateMatchRequest request = new UpdateMatchRequest.Builder("sceond", 11040933)
-                .withMatchScores(Collections.singletonList(new MatchScore(1, 2)))
-                .doTie(true)
-                .build();
-        final Match match = challonge.updateMatch(request);
     }
 */
 }

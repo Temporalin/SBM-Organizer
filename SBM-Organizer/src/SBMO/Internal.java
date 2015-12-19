@@ -10,8 +10,10 @@ public class Internal {
     public static String apiKey;
     public static String url;
     public static int nSetups;
-    public static Queue<Match> colaEnfrentamientos;
-    public static Match[] listaSetups;
+    public static Queue<Match> colaEnfrentamientos; // Cola con TODOS los enfrentamientos
+    
+    public static Match[] enfrentamientosSetups; // Lista de matches con los enfrentamientos para cada setup
+    public static List<Match> listaFinalizados; // Lista de matches finalizados
         
     public Internal(){}
     
@@ -51,37 +53,42 @@ public class Internal {
         return colaEnfrentamientos;
     }
 
-    public void setListaSetups(Match[] listaSetups) {
-        this.listaSetups = listaSetups;
+    public void setEnfrentamientosSetups(Match[] enfrentamientosSetups) {
+        this.enfrentamientosSetups = enfrentamientosSetups;
     }
 
-    public Match[] getListaSetups() {
-        return listaSetups;
+    public Match[] getEnfrentamientosSetups() {
+        return enfrentamientosSetups;
     }
+
+    public static List<Match> getListaFinalizados() {
+        return listaFinalizados;
+    }
+
+    public static void setListaFinalizados(List<Match> listaFinalizados) {
+        Internal.listaFinalizados = listaFinalizados;
+    }
+
     
     /**************/
     /* END GETSET */
     /**************/
     
-    public void startUp(List<Match> enfrentamientos){
-        //inicializamos cola de enfrentamientos
-        this.setColaEnfrentamientos(new LinkedList(enfrentamientos));
-        
-        initializeSetups();
+    // Inicializamos cola de enfrentamientos
+    public void setUp(List<Match> enfrentamientos){
+        this.setColaEnfrentamientos(new LinkedList(enfrentamientos));       
+        Match[] listaS = new Match[getnSetups()];
     }
     
     // Inicialmente rellenamos las setups (que están vacías)
-    public void initializeSetups(){
+    public void updateSetups(){
         
-        Match[] l = new Match[getnSetups()];
+        // IF esVacio
         
         //Sacamos elementos de la cola y los metemos en el array
-        for(int i=0;i<getnSetups();i++){
-
-            l[i] = getColaEnfrentamientos().poll();
-        }
+        for(int i=0;i<getnSetups();i++)
+            getEnfrentamientosSetups()[i] = getColaEnfrentamientos().poll();
         
-        setListaSetups(l);
     }
     
     //public Match[] actualizarSetups(){}

@@ -10,39 +10,57 @@ import challonge.model.*;
 
 public class Main extends javax.swing.JFrame implements ActionListener {
         
-    private Map<String,JTextField> listForm = new HashMap<>();
+    public Internal internal = new Internal();
+    Admin admin = new Admin(internal.getApiKey());
+    
+    private Map<String,JTextField> listForm = new HashMap();
+    
+    private JScrollPane scrollIzq = new JScrollPane();
+    private JScrollPane scrollDer = new JScrollPane();
+    DefaultListModel proximosEnf = new DefaultListModel();
+    DefaultListModel finalizadosEnf = new DefaultListModel();
+
     
     public Main() {
-        Config ventanita = new Config(new javax.swing.JDialog(),true);
-        ventanita.setVisible(true);
+        
+        debug_mode(true);
         
         initComponents();
         //Sacamos el array de enfrentamientos
         
-        Internal internal = new Internal();
-
-        /*internal.setUrl("smashmadrid-rom2");
-        internal.setApiKey("3Eum2ckuPLG7XEni1t4nYwn1qI45IsZZbQlAFPEf");
-        internal.setnSetups(5);*/
-        
         //Llamamos a Admin
-        Admin admin = new Admin(internal.getApiKey());
+        
+        
         //Sacamos la lista de enfrentamientos
         List<Match> lista = admin.listaEnfrentamientos(internal.getUrl());
+        
         //La metemos en la cola
-        internal.startUp(lista);
+        internal.setUp(lista);
+        internal.updateSetups();
         
         // Sacamos array doble (dos por enfrentamiento) con los nombres
-        String[][] listaNombres = admin.getlistaNombres(internal.getListaSetups(),internal.getnSetups());
+        String[][] listaNombres = admin.getlistaNombres(internal.getEnfrentamientosSetups(),internal.getnSetups());
         
-        // Llenamos cada setup con los nombres de los participantes
-        cargarSetups(internal.getnSetups(),listaNombres);
+        inicializar(internal.getnSetups(),listaNombres);
         
-        // Llenamos los Próximos enfrentamientos pasando la cola de enfrentamientos a un array doble de nombres
         cargarCola(admin.getarrayNombre(internal.getColaEnfrentamientos()));
         
     }
 
+    private void debug_mode(Boolean b){
+
+        if(!b){
+            Config ventanita = new Config(new javax.swing.JDialog(),true);
+            ventanita.setVisible(true);
+        }
+        else{
+            internal.setUrl("smashmadrid-rom2");
+            internal.setApiKey("3Eum2ckuPLG7XEni1t4nYwn1qI45IsZZbQlAFPEf");
+            internal.setnSetups(5);
+        }
+
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -64,7 +82,7 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 607, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -150,7 +168,28 @@ public class Main extends javax.swing.JFrame implements ActionListener {
     }// </editor-fold>//GEN-END:initComponents
 
     
-    public void cargarSetups(int nSetups,String[][] listaNombres){
+    // Inicializamos la interfaz generando los elementos necesarios
+    public void inicializar(int nSetups,String[][] listaNombres){
+        
+        /* Próximos enfrentamientos */
+        
+        JList listaIzq = new JList(proximosEnf);
+        
+        scrollIzq.setViewportView(listaIzq);
+        scrollIzq.setSize(250,150);
+        scrollIzq.setBounds(50, 10, 250, 150);
+        jPanel2.add(scrollIzq);
+        
+        /* Enfrentamientos finalizados */
+        
+        JList listaDer = new JList(finalizadosEnf);
+        
+        scrollDer.setViewportView(listaDer);
+        scrollDer.setSize(250,150);
+        scrollDer.setBounds(50, 10, 250, 150);
+        jPanel3.add(scrollDer);
+        
+        /* Setups */
         
         for(int i=0;i<nSetups;i++){
             
@@ -209,44 +248,67 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         }   
     }
     
+    /* Encapsular #2 */
     public void cargarCola(String[][] array_nombres){
-                    
-        DefaultListModel listModel = new DefaultListModel();
-        JScrollPane scrollPane = new JScrollPane();
-        
+                            
         for(int i=0;i<array_nombres.length;i++){       
-            listModel.addElement(array_nombres[i][0]+" vs "+array_nombres[i][1]);
+            proximosEnf.addElement(array_nombres[i][0]+" vs "+array_nombres[i][1]);
         }
         
-        JList list = new JList(listModel);
-        list.setVisibleRowCount(4);
-        scrollPane.setViewportView(list);
-        scrollPane.setSize(250,150);
-        scrollPane.setBounds(50, 10, 250, 150);
-        jPanel2.add(scrollPane);
 
+    }
+    
+    /* Encapsular #2 */
+    public void rellenarLista(){
+    
+        for(int i=0;i<internal.getListaFinalizados().size();i++){       
+            finalizadosEnf.addElement(internal.getListaFinalizados().get(i));
+        }
+        
+    
+    }
+    
+    public void updateSetup(int setup){
+        //REPINTAR TODO?
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
+        // Nombre del botón
         String comando = e.getActionCommand();
-        String parsed = comando.substring(comando.length() - 1);
-
+        
+        String[] resultados = new String[2];
+        MatchScore resultado;
+        int i = 0;
+        
         Iterator it = listForm.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry entry = (Map.Entry)it.next();
             
-            String o_key = entry.getKey().toString();
-            //System.out.println("Key - "+o_key);
+            // Identificador del formulario (ej. j1_0)
+            String key = entry.getKey().toString();
             
-            String key = o_key.substring(o_key.length() - 1);
-            //System.out.println("SubKey - "+key);
-            
-            if(key.equals(parsed)){
+            // Si el identificador del botón es igual al número de setup
+            if(key.substring(key.length() - 1).equals(comando.substring(comando.length() - 1))){
+                // Sacamos el texto del formulario
                 JTextField texto = (JTextField) entry.getValue();
-                System.out.println("Valor: "+texto.getText());
+                resultados[i] = texto.getText();
             }
+            i++;
         }
+        // Metemos en la lista los jugadores + el resultado
+        Match m = internal.getEnfrentamientosSetups()[Integer.parseInt(comando.substring(comando.length() - 1))];
+        resultado = new MatchScore(Integer.parseInt(resultados[0]),Integer.parseInt(resultados[1])); // No puedo meterlo en el otro lado
+        List<MatchScore> lM = new ArrayList();
+        lM.add(resultado);
+        Match mNew = new Match(m,lM);
+        
+        internal.getListaFinalizados().add(mNew);
+        admin.actualizarEnfrentamiento(internal.getUrl(), m.getId(), resultado);
+        updateSetup(Integer.parseInt(comando.substring(comando.length() - 1)));
+        // *** rellenar Setups
+        internal.updateSetups();
+        rellenarLista();
     }
    
     
