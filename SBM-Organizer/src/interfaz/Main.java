@@ -26,8 +26,6 @@ public class Main extends javax.swing.JFrame implements ActionListener {
     private JScrollPane scrollDer = new JScrollPane();
     DefaultListModel proximosEnf = new DefaultListModel();
     DefaultListModel finalizadosEnf = new DefaultListModel();
-    String[][] listaNombres;
-
     
     public Main() {
         
@@ -43,10 +41,7 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         //La metemos en la cola
         internal.setUp(lista);
         internal.initializeSetups();
-        
-        // Sacamos array doble (dos por enfrentamiento) con los nombres
-        //listaNombres = admin.getlistaNombres(internal.getEnfrentamientosSetups(),internal.getnSetups());
-        
+                
         inicializarInterfaz(internal.getnSetups());
         
         // Metemos la cola en la lista de próximos enfrentamientos
@@ -61,7 +56,7 @@ public class Main extends javax.swing.JFrame implements ActionListener {
             ventanita.setVisible(true);
         }
         else{
-            internal.setUrl("smashmadrid-rom2");
+            internal.setUrl("test20D");
             internal.setApiKey("3Eum2ckuPLG7XEni1t4nYwn1qI45IsZZbQlAFPEf");
             internal.setnSetups(5);
         }
@@ -270,12 +265,11 @@ public class Main extends javax.swing.JFrame implements ActionListener {
     // Próximos enfrentamientos
     public void cargarCola(){
        
-        Queue<Match> colaAux = internal.getColaEnfrentamientos();
+        Queue<Match> colaAux = new LinkedList(internal.getColaEnfrentamientos());
+        String[] nombres;
         
-        for(int i=0;i<colaAux.size();i++){
-            
-            String[] nombres = admin.returnNombres(colaAux.poll());
-            
+        for(int i=0;i<internal.getColaEnfrentamientos().size();i++){
+            nombres = admin.returnNombres(colaAux.poll());
             proximosEnf.addElement(nombres[0]+" vs "+nombres[1]);
         }
 
@@ -285,7 +279,6 @@ public class Main extends javax.swing.JFrame implements ActionListener {
     // Enfrentamientos finalizados
     public void rellenarLista(int i){
     
-        
         finalizadosEnf.addElement(
                     admin.returnResultados(internal.getListaFinalizados().get(i))[0]
             + " " +
@@ -351,6 +344,8 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         internal.updateSetups();
         // Pintamos el nuevo enfrentamiento
         pintarEnfrentamiento(Integer.parseInt(comando.substring(comando.length() - 1)));
+        // Eliminamos enfrentamiento nuevo de próximos enfrentamientos
+        proximosEnf.removeElementAt(0);
         // Actualizamos lista visual de enfrentamientos
         rellenarLista(updated);
         updated++;

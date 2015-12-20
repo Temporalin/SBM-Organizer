@@ -17,13 +17,13 @@ public class Admin {
     
     /* API */
     public List<Match> listaEnfrentamientos(String urlPath) {
-        final ListMatchRequest request = new ListMatchRequest.Builder(urlPath).build();
+        final ListMatchRequest request = new ListMatchRequest.Builder(urlPath).withState("open").build();
         final List<Match> matches = challonge.listMatches(request);
         return matches;
     }
     
-    public Participant mostrarParticipante(String urlPath, int matchID) {
-        final GetParticipantRequest request = new GetParticipantRequest.Builder(urlPath, matchID)
+    public Participant mostrarParticipante(String urlPath, int participantID) {
+        final GetParticipantRequest request = new GetParticipantRequest.Builder(urlPath, participantID)
                 .build();
         final Participant participant = challonge.getParticipant(request);
         return participant;
