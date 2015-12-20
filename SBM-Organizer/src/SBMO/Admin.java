@@ -40,40 +40,25 @@ public class Admin {
     
     /* PROPIOS */
     
-    /* Encapsular #1 */ 
-    public String[][] getlistaNombres(Match[] listaIDs, int nSetups){
-        
-        String[][] s = new String[nSetups][2];
-        
-        for(int j=0;j<i.getnSetups();j++){
-            s[j] = returnNombres(i.getEnfrentamientosSetups()[j]);
-        }
-        
-        return s;
-    }
-    
-    /* Encapsular #1 */
-    public String[][] getarrayNombre(Queue<Match> cola){
-
-        String[][] s = new String[cola.size()][2];
-        
-        for(int j=0;j<cola.size();j++){
-            s[j] = returnNombres(cola.poll());
-        }
-        
-        return s;
-    }
-    
-    public String[] returnNombres(Match enfrentamiento){
+    public String[] returnNombres(Match e){
         
         String[] s = new String[2];
         
-        Participant p1 = mostrarParticipante(i.getUrl(), enfrentamiento.getPlayerOneId());
+        Participant p1 = mostrarParticipante(i.getUrl(), e.getPlayerOneId());
         s[0] = p1.getName();
-        Participant p2 = mostrarParticipante(i.getUrl(), enfrentamiento.getPlayerTwoId());
+        Participant p2 = mostrarParticipante(i.getUrl(), e.getPlayerTwoId());
         s[1] = p2.getName();
         
         return s;
+    }
+    
+    public int[] returnResultados(Match e){
+        int[] r = new int[2];
+        e.getScores();
+        r[0] = e.getScores().get(0).getPlayerOneScore();
+        r[1] = e.getScores().get(0).getPlayerTwoScore();
+        
+        return r;
     }
     
     //public void enviarResultado(){}

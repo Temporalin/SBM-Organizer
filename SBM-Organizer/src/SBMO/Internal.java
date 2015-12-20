@@ -13,7 +13,7 @@ public class Internal {
     public static Queue<Match> colaEnfrentamientos; // Cola con TODOS los enfrentamientos
     
     public static Match[] enfrentamientosSetups; // Lista de matches con los enfrentamientos para cada setup
-    public static List<Match> listaFinalizados; // Lista de matches finalizados
+    public static List<Match> listaFinalizados = new ArrayList(); // Lista de matches finalizados
         
     public Internal(){}
     
@@ -77,20 +77,28 @@ public class Internal {
     // Inicializamos cola de enfrentamientos
     public void setUp(List<Match> enfrentamientos){
         this.setColaEnfrentamientos(new LinkedList(enfrentamientos));       
-        Match[] listaS = new Match[getnSetups()];
     }
     
     // Inicialmente rellenamos las setups (que están vacías)
-    public void updateSetups(){
+    public void initializeSetups(){
+    
+        Match[] listaS = new Match[getnSetups()];
         
-        // IF esVacio
-        
-        //Sacamos elementos de la cola y los metemos en el array
         for(int i=0;i<getnSetups();i++)
-            getEnfrentamientosSetups()[i] = getColaEnfrentamientos().poll();
+            listaS[i] = getColaEnfrentamientos().poll();
         
+        setEnfrentamientosSetups(listaS);
     }
     
+    // Rellenamos las setups vacías
+    public void updateSetups(){
+
+        //Sacamos elementos de la cola y los metemos en el array
+        for(int i=0;i<getnSetups();i++)
+            if(getEnfrentamientosSetups()[i] == null) // Si está vacío...
+                getEnfrentamientosSetups()[i] = getColaEnfrentamientos().poll();
+        
+    }
     //public Match[] actualizarSetups(){}
     
     
