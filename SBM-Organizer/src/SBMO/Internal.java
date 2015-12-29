@@ -21,43 +21,43 @@ public class Internal {
     /* GET Y SETS */
     /**************/
     
-    public String getApiKey() {
+    public static String getApiKey() {
         return apiKey;
     }
 
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
+    public static void setApiKey(String a) {
+        apiKey = a;
     }
 
-    public String getUrl() {
+    public static String getUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public static void setUrl(String u) {
+        url = u;
     }
 
-    public int getnSetups() {
+    public static int getnSetups() {
         return nSetups;
     }
 
-    public void setnSetups(int nSetups) {
-        this.nSetups = nSetups;
+    public static void setnSetups(int n) {
+        nSetups = n;
     }
 
-    public void setColaEnfrentamientos(Queue<Match> colaEnfrentamientos) {
-        this.colaEnfrentamientos = colaEnfrentamientos;
+    public static void setColaEnfrentamientos(Queue<Match> c) {
+        colaEnfrentamientos = c;
     }
     
-    public Queue<Match> getColaEnfrentamientos() {
+    public static Queue<Match> getColaEnfrentamientos() {
         return colaEnfrentamientos;
     }
 
-    public void setEnfrentamientosSetups(Match[] enfrentamientosSetups) {
-        this.enfrentamientosSetups = enfrentamientosSetups;
+    public static void setEnfrentamientosSetups(Match[] e) {
+        enfrentamientosSetups = e;
     }
 
-    public Match[] getEnfrentamientosSetups() {
+    public static Match[] getEnfrentamientosSetups() {
         return enfrentamientosSetups;
     }
 
@@ -75,12 +75,12 @@ public class Internal {
     /**************/
     
     // Inicializamos cola de enfrentamientos
-    public void setUp(List<Match> enfrentamientos){
-        this.setColaEnfrentamientos(new LinkedList(enfrentamientos));       
+    public static void setUp(List<Match> enfrentamientos){
+        setColaEnfrentamientos(new LinkedList(enfrentamientos));       
     }
     
     // Inicialmente rellenamos las setups (que están vacías)
-    public void initializeSetups(){
+    public static void initializeSetups(){
     
         Match[] listaS = new Match[getnSetups()];
         
@@ -91,7 +91,7 @@ public class Internal {
     }
     
     // Rellenamos las setups vacías
-    public void updateSetups(){
+    public static void updateSetups(){
 
         //Sacamos elementos de la cola y los metemos en el array
         for(int i=0;i<getnSetups();i++)

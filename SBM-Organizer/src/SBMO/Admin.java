@@ -9,7 +9,6 @@ import java.util.Collections;
 /* Hacemos las peticiones a challonge */
 public class Admin {
     private Challonge challonge;
-    private Internal i = new Internal();
     
     public Admin(String api_link) {
         challonge = new Challonge(api_link);
@@ -44,9 +43,9 @@ public class Admin {
         
         String[] s = new String[2];
         
-        Participant p1 = mostrarParticipante(i.getUrl(), e.getPlayerOneId());
+        Participant p1 = mostrarParticipante(Internal.getUrl(), e.getPlayerOneId());
         s[0] = p1.getName();
-        Participant p2 = mostrarParticipante(i.getUrl(), e.getPlayerTwoId());
+        Participant p2 = mostrarParticipante(Internal.getUrl(), e.getPlayerTwoId());
         s[1] = p2.getName();
         
         return s;

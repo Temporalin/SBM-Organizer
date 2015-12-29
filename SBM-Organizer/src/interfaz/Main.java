@@ -9,8 +9,7 @@ import javax.swing.*;
 import challonge.model.*;
 
 public class Main extends javax.swing.JFrame implements ActionListener {
-        
-    Internal internal = new Internal();
+    
     Admin admin;
     
     private final Boolean debug = true;
@@ -29,23 +28,27 @@ public class Main extends javax.swing.JFrame implements ActionListener {
     
     public Main() {
         
+        
         debug_mode(debug);
         
-        admin = new Admin(internal.getApiKey());
+        admin = new Admin(Internal.getApiKey());
         
         initComponents();        
         
         //Sacamos la lista de enfrentamientos
-        List<Match> lista = admin.listaEnfrentamientos(internal.getUrl());
+        List<Match> lista = admin.listaEnfrentamientos(Internal.getUrl());
         
         //La metemos en la cola
-        internal.setUp(lista);
-        internal.initializeSetups();
-                
-        inicializarInterfaz(internal.getnSetups());
+        Internal.setUp(lista);
+        Internal.initializeSetups();
+        
+        
+        inicializarInterfaz(Internal.getnSetups());
         
         // Metemos la cola en la lista de próximos enfrentamientos
+        
         cargarCola();
+        
         
     }
 
@@ -54,11 +57,10 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         if(!b){
             Config ventanita = new Config(new javax.swing.JDialog(),true);
             ventanita.setVisible(true);
-        }
-        else{
-            internal.setUrl("test20D");
-            internal.setApiKey("3Eum2ckuPLG7XEni1t4nYwn1qI45IsZZbQlAFPEf");
-            internal.setnSetups(5);
+        }else{
+            Internal.setUrl("test20D");
+            Internal.setApiKey("3Eum2ckuPLG7XEni1t4nYwn1qI45IsZZbQlAFPEf");
+            Internal.setnSetups(5);
         }
 
     }
@@ -234,7 +236,7 @@ public class Main extends javax.swing.JFrame implements ActionListener {
             // Añadir evento
             update.addActionListener(this);
             
-            // Mostrar por pantalla el contenido   
+            // Mostrar por pantalla el contenido
         }   
     }
     
@@ -248,14 +250,14 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         
         // Jugador 1
         JLabel j1 = new JLabel();
-        j1.setText(admin.returnNombres(internal.getEnfrentamientosSetups()[numeroSetup])[0]);
+        j1.setText(admin.returnNombres(Internal.getEnfrentamientosSetups()[numeroSetup])[0]);
         j1.setBounds(k, 30, anchura, 30);
         jPanel1.add(j1);
         nombresLabel.put("j1_"+numeroSetup,j1);
 
         // Jugador 2
         JLabel j2 = new JLabel();
-        j2.setText(admin.returnNombres(internal.getEnfrentamientosSetups()[numeroSetup])[1]);
+        j2.setText(admin.returnNombres(Internal.getEnfrentamientosSetups()[numeroSetup])[1]);
         j2.setBounds(k, 60, anchura, 30);
         jPanel1.add(j2);
         nombresLabel.put("j2_"+numeroSetup,j2);
@@ -265,10 +267,10 @@ public class Main extends javax.swing.JFrame implements ActionListener {
     // Próximos enfrentamientos
     public void cargarCola(){
        
-        Queue<Match> colaAux = new LinkedList(internal.getColaEnfrentamientos());
+        Queue<Match> colaAux = new LinkedList(Internal.getColaEnfrentamientos());
         String[] nombres;
         
-        for(int i=0;i<internal.getColaEnfrentamientos().size();i++){
+        for(int i=0;i<Internal.getColaEnfrentamientos().size();i++){
             nombres = admin.returnNombres(colaAux.poll());
             proximosEnf.addElement(nombres[0]+" vs "+nombres[1]);
         }
@@ -280,13 +282,13 @@ public class Main extends javax.swing.JFrame implements ActionListener {
     public void rellenarLista(int i){
     
         finalizadosEnf.addElement(
-                    admin.returnResultados(internal.getListaFinalizados().get(i))[0]
+                    admin.returnResultados(Internal.getListaFinalizados().get(i))[0]
             + " " +
-                    admin.returnNombres(internal.getListaFinalizados().get(i))[0]
+                    admin.returnNombres(Internal.getListaFinalizados().get(i))[0]
             +" vs "+
-                    admin.returnResultados(internal.getListaFinalizados().get(i))[1]
+                    admin.returnResultados(Internal.getListaFinalizados().get(i))[1]
             + " " +
-                    admin.returnNombres(internal.getListaFinalizados().get(i))[1]
+                    admin.returnNombres(Internal.getListaFinalizados().get(i))[1]
         );
         
     }
@@ -326,22 +328,22 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         jPanel1.repaint();
         
         // Metemos en la lista los jugadores + el resultado
-        Match m = internal.getEnfrentamientosSetups()[Integer.parseInt(nSetup)];
+        Match m = Internal.getEnfrentamientosSetups()[Integer.parseInt(nSetup)];
         resultado = new MatchScore(Integer.parseInt(resultados[0]),Integer.parseInt(resultados[1]));
         List<MatchScore> lM = new ArrayList();
         lM.add(resultado);
         Match mNew = new Match(m,lM);
         
         // Actualizamos lista de finalizados
-        internal.getListaFinalizados().add(mNew);        
+        Internal.getListaFinalizados().add(mNew);        
         // Borramos el enfrentamiento
-        internal.getEnfrentamientosSetups()[Integer.parseInt(nSetup)] = null;
+        Internal.getEnfrentamientosSetups()[Integer.parseInt(nSetup)] = null;
         // Actualizamos Challonge
         if(!debug)
-            admin.actualizarEnfrentamiento(internal.getUrl(), m.getId(), resultado);
+            admin.actualizarEnfrentamiento(Internal.getUrl(), m.getId(), resultado);
         
         // Actualizamos la lista de enfrentamientos en setups
-        internal.updateSetups();
+        Internal.updateSetups();
         // Pintamos el nuevo enfrentamiento
         pintarEnfrentamiento(Integer.parseInt(comando.substring(comando.length() - 1)));
         // Eliminamos enfrentamiento nuevo de próximos enfrentamientos
