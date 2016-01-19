@@ -2,6 +2,7 @@ package interfaz;
 
 import SBMO.Internal;
 import SBMO.Admin;
+import SBMO.SBMOrganizer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
@@ -10,11 +11,9 @@ import challonge.model.*;
 
 public class Main extends javax.swing.JFrame implements ActionListener {
     
-    Admin admin;
-    
-    private final Boolean debug = true;
     private int updated = 0;
     
+    // Mapa que gu
     private Map<String,JTextField> listForm = new HashMap();
     private Map<String,JLabel> nombresLabel = new HashMap();
     
@@ -26,43 +25,16 @@ public class Main extends javax.swing.JFrame implements ActionListener {
     DefaultListModel proximosEnf = new DefaultListModel();
     DefaultListModel finalizadosEnf = new DefaultListModel();
     
-    public Main() {
+    public Main(int nSetups) {
         
         
-        debug_mode(debug);
+        initComponents();
         
-        admin = new Admin(Internal.getApiKey());
-        
-        initComponents();        
-        
-        //Sacamos la lista de enfrentamientos
-        List<Match> lista = admin.listaEnfrentamientos(Internal.getUrl());
-        
-        //La metemos en la cola
-        Internal.setUp(lista);
-        Internal.initializeSetups();
-        
-        
-        inicializarInterfaz(Internal.getnSetups());
-        
-        // Metemos la cola en la lista de próximos enfrentamientos
+        inicializarInterfaz(nSetups);
         
         cargarCola();
         
         
-    }
-
-    private void debug_mode(Boolean b){
-
-        if(!b){
-            Config ventanita = new Config(new javax.swing.JDialog(),true);
-            ventanita.setVisible(true);
-        }else{
-            Internal.setUrl("test20D");
-            Internal.setApiKey("3Eum2ckuPLG7XEni1t4nYwn1qI45IsZZbQlAFPEf");
-            Internal.setnSetups(5);
-        }
-
     }
     
     @SuppressWarnings("unchecked")
@@ -339,7 +311,7 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         // Borramos el enfrentamiento
         Internal.getEnfrentamientosSetups()[Integer.parseInt(nSetup)] = null;
         // Actualizamos Challonge
-        if(!debug)
+        if(!SBMOrganizer.debug) //*** CAMBIAR ESTO
             admin.actualizarEnfrentamiento(Internal.getUrl(), m.getId(), resultado);
         
         // Actualizamos la lista de enfrentamientos en setups
@@ -354,12 +326,13 @@ public class Main extends javax.swing.JFrame implements ActionListener {
     }
    
     
-    public static void main(String args[]) {
+    //public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
+    /*
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -378,14 +351,14 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         }
         //</editor-fold>
         //</editor-fold>
-
+*/
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        /*java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Main().setVisible(true);
             }
         });
-    }
+    }*/
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;

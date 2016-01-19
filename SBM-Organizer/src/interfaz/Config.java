@@ -1,25 +1,44 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package interfaz;
 
 import SBMO.Internal;
 
-/**
- *
- * @author Pablo
- */
+
 public class Config extends javax.swing.JDialog {
 
-    /**
-     * Creates new form config
-     */
+    private String api;
+    private String url;
+    private int nSetups;
+    
     public Config(javax.swing.JDialog parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
+
+    /* GET SET */
+    public String getApiKey() {
+        return api;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.api = apiKey;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public int getnSetups() {
+        return nSetups;
+    }
+
+    public void setnSetups(int nSetups) {
+        this.nSetups = nSetups;
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -118,12 +137,10 @@ public class Config extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        
-        Internal modelo = new Internal();
-        
-        modelo.setApiKey(apiKey.getText());
-        modelo.setUrl(link.getText());
-        modelo.setnSetups(Integer.parseInt(number.getText()));
+       
+        this.setApiKey(apiKey.getText());
+        this.setUrl(link.getText());
+        this.setnSetups(Integer.parseInt(number.getText()));
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 

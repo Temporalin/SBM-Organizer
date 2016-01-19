@@ -1,7 +1,6 @@
 package SBMO;
 
 import java.util.List;
-import java.util.Queue;
 import challonge.model.*;
 import challonge.request.*;
 import java.util.Collections;
@@ -39,13 +38,13 @@ public class Admin {
     
     /* PROPIOS */
     
-    public String[] returnNombres(Match e){
+    public String[] returnNombres(String url, Match e){
         
         String[] s = new String[2];
         
-        Participant p1 = mostrarParticipante(Internal.getUrl(), e.getPlayerOneId());
+        Participant p1 = mostrarParticipante(url, e.getPlayerOneId());
         s[0] = p1.getName();
-        Participant p2 = mostrarParticipante(Internal.getUrl(), e.getPlayerTwoId());
+        Participant p2 = mostrarParticipante(url, e.getPlayerTwoId());
         s[1] = p2.getName();
         
         return s;

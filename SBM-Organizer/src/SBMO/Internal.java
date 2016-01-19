@@ -7,9 +7,10 @@ import challonge.model.Match;
 /* Metemos enfrentamientos en las setups */
 
 public class Internal {
-    public static String apiKey;
-    public static String url;
-    public static int nSetups;
+    
+    public String apiKey;
+    public String url;
+    public int nSetups;
     public static Queue<Match> colaEnfrentamientos; // Cola con TODOS los enfrentamientos
     
     public static Match[] enfrentamientosSetups; // Lista de matches con los enfrentamientos para cada setup
@@ -21,27 +22,27 @@ public class Internal {
     /* GET Y SETS */
     /**************/
     
-    public static String getApiKey() {
+    public String getApiKey() {
         return apiKey;
     }
 
-    public static void setApiKey(String a) {
+    public void setApiKey(String a) {
         apiKey = a;
     }
 
-    public static String getUrl() {
+    public String getUrl() {
         return url;
     }
 
-    public static void setUrl(String u) {
+    public void setUrl(String u) {
         url = u;
     }
 
-    public static int getnSetups() {
+    public int getnSetups() {
         return nSetups;
     }
 
-    public static void setnSetups(int n) {
+    public void setnSetups(int n) {
         nSetups = n;
     }
 
@@ -75,12 +76,12 @@ public class Internal {
     /**************/
     
     // Inicializamos cola de enfrentamientos
-    public static void setUp(List<Match> enfrentamientos){
+    public void setQueue(List<Match> enfrentamientos){
         setColaEnfrentamientos(new LinkedList(enfrentamientos));       
     }
     
     // Inicialmente rellenamos las setups (que están vacías)
-    public static void initializeSetups(){
+    public void initializeSetups(){
     
         Match[] listaS = new Match[getnSetups()];
         
@@ -91,7 +92,7 @@ public class Internal {
     }
     
     // Rellenamos las setups vacías
-    public static void updateSetups(){
+    public void updateSetups(){
 
         //Sacamos elementos de la cola y los metemos en el array
         for(int i=0;i<getnSetups();i++)
