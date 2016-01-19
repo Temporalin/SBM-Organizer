@@ -1,22 +1,22 @@
 package interfaz;
 
-import SBMO.Internal;
-import SBMO.Admin;
-import SBMO.SBMOrganizer;
+import SBMO.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 import javax.swing.*;
 import challonge.model.*;
 
-public class Main extends javax.swing.JFrame implements ActionListener {
+public class MainUI extends javax.swing.JFrame implements ActionListener {
     
     private int updated = 0;
     
-    // Mapa que gu
+    // Mapa que guarda los campos de texto
     private Map<String,JTextField> listForm = new HashMap();
+    // Mapa que guarda las etiquetas
     private Map<String,JLabel> nombresLabel = new HashMap();
     
+    // Medidas para las setups
     private int espacio = 30;
     private int anchura = 100;
     
@@ -25,7 +25,8 @@ public class Main extends javax.swing.JFrame implements ActionListener {
     DefaultListModel proximosEnf = new DefaultListModel();
     DefaultListModel finalizadosEnf = new DefaultListModel();
     
-    public Main(int nSetups) {
+
+    public MainUI(int nSetups) {
         
         
         initComponents();
@@ -178,11 +179,11 @@ public class Main extends javax.swing.JFrame implements ActionListener {
             
             // Etiqueta Setup #
             JLabel setup = new JLabel();
-            setup.setText("Setup "+i);
+            setup.setText("Setup "+i); // *** Hay que cambiar 0 por 00
             setup.setBounds(k, 10, anchura, 30);
             jPanel1.add(setup);
             
-            pintarEnfrentamiento(i);
+            pintarEnfrentamientoSetup(i);
             
             // Formulario resultados 1
             JTextField r1 = new JTextField();
@@ -200,7 +201,7 @@ public class Main extends javax.swing.JFrame implements ActionListener {
             
             // Botón actualizar
             JButton update = new JButton();
-            update.setText("Update"+i);
+            update.setText("Update"+i); // *** Hay que cambiar 0 por 00
             update.setSize(80,30);
             update.setBounds(k-espacio,90,80,30);
             jPanel1.add(update);
@@ -208,11 +209,10 @@ public class Main extends javax.swing.JFrame implements ActionListener {
             // Añadir evento
             update.addActionListener(this);
             
-            // Mostrar por pantalla el contenido
         }   
     }
     
-    private void pintarEnfrentamiento(int numeroSetup){
+    private void pintarEnfrentamientoSetup(int numeroSetup){
     
         int k;
         if(numeroSetup==0)
@@ -222,14 +222,14 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         
         // Jugador 1
         JLabel j1 = new JLabel();
-        j1.setText(admin.returnNombres(Internal.getEnfrentamientosSetups()[numeroSetup])[0]);
+        j1.setText(Internal.mapaPartipantes.get(Internal.getEnfrentamientosSetups()); 
         j1.setBounds(k, 30, anchura, 30);
         jPanel1.add(j1);
         nombresLabel.put("j1_"+numeroSetup,j1);
 
         // Jugador 2
         JLabel j2 = new JLabel();
-        j2.setText(admin.returnNombres(Internal.getEnfrentamientosSetups()[numeroSetup])[1]);
+        j2.setText(Admin.returnNombres(Internal.getUrl(),Internal.getEnfrentamientosSetups()[numeroSetup])[1]);
         j2.setBounds(k, 60, anchura, 30);
         jPanel1.add(j2);
         nombresLabel.put("j2_"+numeroSetup,j2);
@@ -243,7 +243,7 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         String[] nombres;
         
         for(int i=0;i<Internal.getColaEnfrentamientos().size();i++){
-            nombres = admin.returnNombres(colaAux.poll());
+            nombres = Admin.returnNombres(Internal.getUrl(),colaAux.poll());
             proximosEnf.addElement(nombres[0]+" vs "+nombres[1]);
         }
 
@@ -251,32 +251,36 @@ public class Main extends javax.swing.JFrame implements ActionListener {
     
     /* Encapsular #2 */
     // Enfrentamientos finalizados
-    public void rellenarLista(int i){
+    public void actualizarEnfFinalizados(int i){
     
         finalizadosEnf.addElement(
-                    admin.returnResultados(Internal.getListaFinalizados().get(i))[0]
+                    Admin.returnResultados(Internal.getListaFinalizados().get(i))[0]
             + " " +
-                    admin.returnNombres(Internal.getListaFinalizados().get(i))[0]
+                    Admin.returnNombres(Internal.getUrl(),Internal.getListaFinalizados().get(i))[0]
             +" vs "+
-                    admin.returnResultados(Internal.getListaFinalizados().get(i))[1]
+                    Admin.returnResultados(Internal.getListaFinalizados().get(i))[1]
             + " " +
-                    admin.returnNombres(Internal.getListaFinalizados().get(i))[1]
+                    Admin.returnNombres(Internal.getUrl(),Internal.getListaFinalizados().get(i))[1]
         );
         
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
+        
         // Nombre del botón
         String comando = e.getActionCommand();
+        // *** Cogemos el identificador (ej. 00)
         String nSetup = comando.substring(comando.length() - 1);
         
+        // Variable auxiliar con los resultados de las casillas
         String[] resultados = new String[2];
         MatchScore resultado;
-        int i = 0;
+        int i = 0; // Guarda la posición para el string resultados
         
-        Iterator it = listForm.entrySet().iterator();
+        Iterator it = listForm.entrySet().iterator(); // *** Hay que cambiar 0 por 00
         while (it.hasNext()) {
+            // Iteramos
             Map.Entry entry = (Map.Entry)it.next();
             
             // Identificador del formulario (ej. j1_0)
@@ -288,6 +292,7 @@ public class Main extends javax.swing.JFrame implements ActionListener {
                 JTextField texto = (JTextField) entry.getValue();
                 resultados[i] = texto.getText();
             }
+            // Alternamos entre 0 y 1
             if(i==0)
                 i++;
             else
@@ -296,10 +301,13 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         // Borramos las etiquetas
         jPanel1.remove(nombresLabel.get("j1_"+Integer.parseInt(nSetup)));
         jPanel1.remove(nombresLabel.get("j2_"+Integer.parseInt(nSetup)));
+        // *** Habría que poner a 0 los contadores
+        // Actualizamos la interfaz
         jPanel1.revalidate();
         jPanel1.repaint();
         
         // Metemos en la lista los jugadores + el resultado
+        // *** ENCAPSULAR EN UN NUEVO MÉTODO
         Match m = Internal.getEnfrentamientosSetups()[Integer.parseInt(nSetup)];
         resultado = new MatchScore(Integer.parseInt(resultados[0]),Integer.parseInt(resultados[1]));
         List<MatchScore> lM = new ArrayList();
@@ -311,18 +319,19 @@ public class Main extends javax.swing.JFrame implements ActionListener {
         // Borramos el enfrentamiento
         Internal.getEnfrentamientosSetups()[Integer.parseInt(nSetup)] = null;
         // Actualizamos Challonge
-        if(!SBMOrganizer.debug) //*** CAMBIAR ESTO
-            admin.actualizarEnfrentamiento(Internal.getUrl(), m.getId(), resultado);
+        //if(!Main.debug) //*** CAMBIAR ESTO
+            //admin.actualizarEnfrentamiento(Internal.getUrl(), m.getId(), resultado);
         
         // Actualizamos la lista de enfrentamientos en setups
-        Internal.updateSetups();
-        // Pintamos el nuevo enfrentamiento
-        pintarEnfrentamiento(Integer.parseInt(comando.substring(comando.length() - 1)));
+        Internal.updateSetups(); //*** Pasarle la ID del setup
+        // Pintamos el nuevo enfrentamiento en las setups de la interfaz
+        pintarEnfrentamientoSetup(Integer.parseInt(nSetup));
         // Eliminamos enfrentamiento nuevo de próximos enfrentamientos
         proximosEnf.removeElementAt(0);
-        // Actualizamos lista visual de enfrentamientos
-        rellenarLista(updated);
+        // Actualizamos lista de enfrentamientos finalizados de la interfaz
+        actualizarEnfFinalizados(updated);
         updated++;
+        
     }
    
     

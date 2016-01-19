@@ -2,25 +2,66 @@ package SBMO;
 
 import java.util.*;
 import challonge.model.Match;
+import challonge.model.Participant;
+import javax.swing.JTextField;
 
 /* Aquí iría la gestión interna del programa */
 /* Metemos enfrentamientos en las setups */
 
 public class Internal {
     
-    public String apiKey;
-    public String url;
-    public int nSetups;
+    /* ATRIBUTOS */
+    
+    private String apiKey;
+    private String url;
+    private int nSetups;
+    
     public static Queue<Match> colaEnfrentamientos; // Cola con TODOS los enfrentamientos
+    public static Setup[] enfrentamientosSetups; // Lista de matches con los enfrentamientos para cada setup
+    public static List<Match> listaFinalizados; // Lista de matches finalizados
+    public static Map<Integer,Participant> mapaPartipantes; // Mapa de Id/Participante
+    //private Queue<Integer> nextSetup; por si se necesita
+
+    public Internal(String apiKey, String url, int nSetups) {
+        this.apiKey = apiKey;
+        this.url = url;
+        this.nSetups = nSetups;
+        enfrentamientosSetups = new Setup[nSetups];
+        listaFinalizados = new ArrayList();
+        mapaPartipantes = new HashMap();
+    }
     
-    public static Match[] enfrentamientosSetups; // Lista de matches con los enfrentamientos para cada setup
-    public static List<Match> listaFinalizados = new ArrayList(); // Lista de matches finalizados
+    /* MÉTODOS */ 
+    
+    // Inicializamos cola de enfrentamientos
+    public static void setQueue(List<Match> enfrentamientos){
+        setColaEnfrentamientos(new LinkedList(enfrentamientos));       
+    }
+    // *** Juntar estos dos métodos en uno
+    
+    // Inicialmente rellenamos todas las setups
+    public void initializeSetups(){
+    
+        Match[] listaS = new Match[this.getnSetups()];
         
-    public Internal(){}
+        for(int i=0;i<this.getnSetups();i++)
+            listaS[i] = getColaEnfrentamientos().poll();
+        
+        setEnfrentamientosSetups(listaS);
+    }
     
-    /**************/
+    // Rellenamos las setups vacías
+    public void updateSetups(){ // *** Añadir parámetro ID
+
+        //Sacamos elementos de la cola y los metemos en el array de enfrentamientos en setups
+        for(int i=0;i<this.getnSetups();i++)
+            if(getEnfrentamientosSetups()[i] == null) // Si está vacío...
+                getEnfrentamientosSetups()[i] = getColaEnfrentamientos().poll();
+        
+    }
+    
+        
     /* GET Y SETS */
-    /**************/
     
     public String getApiKey() {
         return apiKey;
@@ -54,11 +95,11 @@ public class Internal {
         return colaEnfrentamientos;
     }
 
-    public static void setEnfrentamientosSetups(Match[] e) {
+    public static void setEnfrentamientosSetups(Setup[] e) {
         enfrentamientosSetups = e;
     }
 
-    public static Match[] getEnfrentamientosSetups() {
+    public static Setup[] getEnfrentamientosSetups() {
         return enfrentamientosSetups;
     }
 
@@ -70,37 +111,4 @@ public class Internal {
         Internal.listaFinalizados = listaFinalizados;
     }
 
-    
-    /**************/
-    /* END GETSET */
-    /**************/
-    
-    // Inicializamos cola de enfrentamientos
-    public void setQueue(List<Match> enfrentamientos){
-        setColaEnfrentamientos(new LinkedList(enfrentamientos));       
-    }
-    
-    // Inicialmente rellenamos las setups (que están vacías)
-    public void initializeSetups(){
-    
-        Match[] listaS = new Match[getnSetups()];
-        
-        for(int i=0;i<getnSetups();i++)
-            listaS[i] = getColaEnfrentamientos().poll();
-        
-        setEnfrentamientosSetups(listaS);
-    }
-    
-    // Rellenamos las setups vacías
-    public void updateSetups(){
-
-        //Sacamos elementos de la cola y los metemos en el array
-        for(int i=0;i<getnSetups();i++)
-            if(getEnfrentamientosSetups()[i] == null) // Si está vacío...
-                getEnfrentamientosSetups()[i] = getColaEnfrentamientos().poll();
-        
-    }
-    //public Match[] actualizarSetups(){}
-    
-    
 }
