@@ -2,6 +2,7 @@ package SBMO;
 
 import java.util.*;
 import challonge.model.Match;
+import challonge.model.MatchScore;
 import challonge.model.Participant;
 import challonge.model.Tournament;
 import challonge.model.TournamentType;
@@ -19,16 +20,66 @@ public class Internal {
     private Challonge challonge;
     private Tournament tournament;
 
-    private Map<Integer, Participant> mapaJugadores; //Mapa de jugadores. Clave: id tipo int. Valor: jugdador tipo Participant.
-    private Match[] enfrentamientosSetups; // Lista de matches con los enfrentamientos para cada setup
+    private Map<Integer, Participant> mapaJugadoresPorID;
+    private Map<String, Participant> mapaJugadoresPorNombre; //Mapas de jugadores
+    private Setup[] enfrentamientosSetups; // Lista de matches con los enfrentamientos para cada setup
+    private Queue<Integer> nextSetup;
     private List<Match> listaFinalizados = new ArrayList(); // Lista de matches finalizados
     private Queue<Match> colaEnfrentamientos; // Cola con TODOS los enfrentamientos
+    
+    public class Setup{
+        private int number;
+        private String name;
+        private Participant one;
+        private Participant two;
+        private Match match;
+
+        public Setup(int number, String name, Participant one, Participant two, Match match) {
+            this.number = number;
+            this.name = name;
+            this.one = one;
+            this.two = two;
+            this.match = match;
+        }
+        public Setup(int number, Participant one, Participant two, Match match) {
+            this.number = number;
+            this.name = "Setup N"+number;
+            this.one = one;
+            this.two = two;
+            this.match = match;
+        }
+
+        public int getNumber() {
+            return number;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Participant getOne() {
+            return one;
+        }
+
+        public Participant getTwo() {
+            return two;
+        }
+
+        public Match getMatch() {
+            return match;
+        }
+        
+    }
 
     public Internal(String apiKey, int nSetups) {
         this.apiKey = apiKey;
         this.nSetups = nSetups;
         this.challonge = new Challonge(apiKey);
-        mapaJugadores = new HashMap<>();
+        this.mapaJugadoresPorID = new HashMap<>();
+        this.mapaJugadoresPorNombre = new HashMap<>();
+        enfrentamientosSetups = new Setup[nSetups];
+        colaEnfrentamientos = new ArrayDeque<>();
+        listaFinalizados = new ArrayList<>();
     }
 
     public Tournament createStandardTournament(String name, String url) {
@@ -43,7 +94,9 @@ public class Internal {
         cprb.withSeed(seed);
 
         Participant p = challonge.createParticipant(cprb.build());
-        mapaJugadores.put(p.getId(), p);
+        
+        mapaJugadoresPorNombre.put(p.getName(),p);
+        mapaJugadoresPorID.put(p.getId(), p);
 
         return p;
     }
@@ -53,16 +106,26 @@ public class Internal {
         
         challonge.startTournament(str);
         
-        colaEnfrentamientos = new LinkedList<>();
+        updateOpenMatches();
         
-        ListMatchRequest.Builder lmrb = new ListMatchRequest.Builder(tournament.getUrl());
-        lmrb.withState("open");
-        List<Match> listaPartidas = challonge.listMatches(lmrb.build());
-        
-        for(Match m:listaPartidas){
-            colaEnfrentamientos.add(m);
+        for(int i=0;i<nSetups;i++){
+            Match m = colaEnfrentamientos.poll();
+            Participant one = mapaJugadoresPorID.get(m.getPlayerOneId());
+            Participant two = mapaJugadoresPorID.get(m.getPlayerTwoId());
+            enfrentamientosSetups[i] = new Setup(i,one,two,m);
         }
-        
+    }
+    
+    private void updateOpenMatches(){
+        if(colaEnfrentamientos.size()==0){
+            ListMatchRequest.Builder lmrb = new ListMatchRequest.Builder(tournament.getUrl());
+            lmrb.withState("open");
+            List<Match> listaPartidas = challonge.listMatches(lmrb.build());
+
+            for(Match m:listaPartidas){
+                colaEnfrentamientos.add(m);
+            }
+        }
     }
 
     public void deleteTournament() {
@@ -71,98 +134,28 @@ public class Internal {
         challonge.deleteTournament(dtr);
     }
     
-    
-    public Match peekNextMatch(){
-        return colaEnfrentamientos.peek();
+    public Setup getSetup(int i){
+        return enfrentamientosSetups[i];
     }
     
-    public Match pollNextMatch(){
-        return colaEnfrentamientos.poll();
+    public void finishMatchInSetup(Setup set,int winnerID,List<MatchScore> ms){
+        int i = set.getNumber();
+        
+        UpdateMatchRequest.Builder umrb = new UpdateMatchRequest.Builder(tournament.getUrl(), set.getMatch().getId());
+        umrb.withMatchScores(ms).withWinnerId(winnerID);
+        
+        challonge.updateMatch(umrb.build());
+        
+        Match next=getNextMatch();
+        enfrentamientosSetups[i] = new Setup(i,mapaJugadoresPorID.get(next.getPlayerOneId()),mapaJugadoresPorID.get(next.getPlayerTwoId()),next);
     }
     
-    public boolean hasNextMatch(){
-        return colaEnfrentamientos.size()>0;
-    }
-    
-    /**
-     * ***********
-     */
-    /* GET Y SETS */
-    /**
-     * ***********
-     */
-    public String getApiKey() {
-        return apiKey;
+    private Match getNextMatch(){
+        updateOpenMatches();
+        Match m = colaEnfrentamientos.poll();
+        return m;
     }
 
-    public void setApiKey(String a) {
-        apiKey = a;
-    }
-
-    public int getnSetups() {
-        return nSetups;
-    }
-
-    public void setnSetups(int n) {
-        nSetups = n;
-    }
-
-    public void setColaEnfrentamientos(Queue<Match> c) {
-        colaEnfrentamientos = c;
-    }
-
-    public Queue<Match> getColaEnfrentamientos() {
-        return colaEnfrentamientos;
-    }
-
-    public void setEnfrentamientosSetups(Match[] e) {
-        setEnfrentamientosSetups(e);
-    }
-
-    public Match[] getEnfrentamientosSetups() {
-        return enfrentamientosSetups;
-    }
-
-    public List<Match> getListaFinalizados() {
-        return listaFinalizados;
-    }
-
-    public void setListaFinalizados(List<Match> listaFinalizados) {
-        this.listaFinalizados = listaFinalizados;
-    }
-
-    /**
-     * ***********
-     */
-    /* END GETSET */
-    /**
-     * ***********
-     */
-    // Inicialmente rellenamos las setups (que están vacías)
-    public void initializeSetups() {
-
-        Match[] listaS = new Match[getnSetups()];
-
-        for (int i = 0; i < getnSetups(); i++) {
-            listaS[i] = getColaEnfrentamientos().poll();
-        }
-
-        setEnfrentamientosSetups(listaS);
-    }
-
-    // Rellenamos las setups vacías
-    public void updateSetups() {
-
-        //Sacamos elementos de la cola y los metemos en el array
-        for (int i = 0; i < getnSetups(); i++) {
-            if (getEnfrentamientosSetups()[i] == null) // Si está vacío...
-            {
-                getEnfrentamientosSetups()[i] = getColaEnfrentamientos().poll();
-            }
-        }
-
-    }
-    
     public static void main(String[] args){
         
         Internal internal = new Internal("7qFUMnSyDCqoES42Kvh0mJJnYOwgma1wtGZRbdYn",4);
@@ -171,14 +164,6 @@ public class Internal {
             internal.addParticipant("J"+i,i);
         }
         internal.startTournament();
-        
-        while(internal.hasNextMatch()){
-            Match m = internal.pollNextMatch();
-            Participant one = internal.mapaJugadores.get(m.getPlayerOneId());
-            Participant two = internal.mapaJugadores.get(m.getPlayerTwoId());
-            
-            System.out.println(one.getName()+"  vs  "+two.getName());
-        }
         
         System.out.println("Finalizado torneo, comprueba todo en Challonge y pulsa enter");
         try {
