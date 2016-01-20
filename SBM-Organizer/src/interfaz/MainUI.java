@@ -25,16 +25,23 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
     DefaultListModel proximosEnf = new DefaultListModel();
     DefaultListModel finalizadosEnf = new DefaultListModel();
     
+    // Le pasamos Admin e Internal
+    // *** Alternativa a static
+    private Admin admin;
+    private Internal internal;
 
-    public MainUI(int nSetups) {
+    public MainUI(Admin a, Internal i) {
         
+        this.admin = a;
+        this.internal = i;
         
+        // Interfaz
         initComponents();
         
-        inicializarInterfaz(nSetups);
+        inicializarInterfaz(i.getnSetups());
         
-        cargarCola();
-        
+        // Cargamos los próximos enfrentamientos
+        cargarProximosEnf();
         
     }
     
@@ -222,45 +229,48 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         
         // Jugador 1
         JLabel j1 = new JLabel();
-        j1.setText(Internal.mapaPartipantes.get(Internal.getEnfrentamientosSetups()); 
+        j1.setText(internal.devolverNombre(internal.getEnfrentamientosSetups()[numeroSetup].getOne().getId())); 
         j1.setBounds(k, 30, anchura, 30);
         jPanel1.add(j1);
         nombresLabel.put("j1_"+numeroSetup,j1);
 
         // Jugador 2
         JLabel j2 = new JLabel();
-        j2.setText(Admin.returnNombres(Internal.getUrl(),Internal.getEnfrentamientosSetups()[numeroSetup])[1]);
+        j2.setText(internal.devolverNombre(internal.getEnfrentamientosSetups()[numeroSetup].getTwo().getId()));
         j2.setBounds(k, 60, anchura, 30);
         jPanel1.add(j2);
         nombresLabel.put("j2_"+numeroSetup,j2);
     }
     
-    /* Encapsular #2 */
     // Próximos enfrentamientos
-    public void cargarCola(){
+    public void cargarProximosEnf(){
        
-        Queue<Match> colaAux = new LinkedList(Internal.getColaEnfrentamientos());
-        String[] nombres;
+        Queue<Match> colaAux = new LinkedList(internal.getColaEnfrentamientos());
+        Match matchAux;
         
-        for(int i=0;i<Internal.getColaEnfrentamientos().size();i++){
-            nombres = Admin.returnNombres(Internal.getUrl(),colaAux.poll());
-            proximosEnf.addElement(nombres[0]+" vs "+nombres[1]);
+        for(int i=0;i<internal.getColaEnfrentamientos().size();i++){
+            // Tenemos un Match
+            matchAux = colaAux.poll();
+            // Desde el match sacamos los Participants
+            int p1 = matchAux.getPlayerOneId();
+            int p2 = matchAux.getPlayerTwoId();
+            
+            proximosEnf.addElement(internal.devolverNombre(p1)+" vs "+internal.devolverNombre(p2));
         }
 
     }
     
-    /* Encapsular #2 */
     // Enfrentamientos finalizados
     public void actualizarEnfFinalizados(int i){
     
         finalizadosEnf.addElement(
-                    Admin.returnResultados(Internal.getListaFinalizados().get(i))[0]
+                    Admin.returnResultados(internal.getListaFinalizados().get(i))[0]
             + " " +
-                    Admin.returnNombres(Internal.getUrl(),Internal.getListaFinalizados().get(i))[0]
+                    internal.devolverNombre(internal.getListaFinalizados().get(i).getPlayerOneId())
             +" vs "+
-                    Admin.returnResultados(Internal.getListaFinalizados().get(i))[1]
+                    Admin.returnResultados(internal.getListaFinalizados().get(i))[1]
             + " " +
-                    Admin.returnNombres(Internal.getUrl(),Internal.getListaFinalizados().get(i))[1]
+                    internal.devolverNombre(internal.getListaFinalizados().get(i).getPlayerTwoId())
         );
         
     }
@@ -308,22 +318,22 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         
         // Metemos en la lista los jugadores + el resultado
         // *** ENCAPSULAR EN UN NUEVO MÉTODO
-        Match m = Internal.getEnfrentamientosSetups()[Integer.parseInt(nSetup)];
+        Match m = internal.getEnfrentamientosSetups()[Integer.parseInt(nSetup)].getMatch();
         resultado = new MatchScore(Integer.parseInt(resultados[0]),Integer.parseInt(resultados[1]));
         List<MatchScore> lM = new ArrayList();
         lM.add(resultado);
         Match mNew = new Match(m,lM);
         
         // Actualizamos lista de finalizados
-        Internal.getListaFinalizados().add(mNew);        
+        internal.getListaFinalizados().add(mNew);        
         // Borramos el enfrentamiento
-        Internal.getEnfrentamientosSetups()[Integer.parseInt(nSetup)] = null;
+        internal.getEnfrentamientosSetups()[Integer.parseInt(nSetup)] = null;
         // Actualizamos Challonge
         //if(!Main.debug) //*** CAMBIAR ESTO
-            //admin.actualizarEnfrentamiento(Internal.getUrl(), m.getId(), resultado);
+            //admin.actualizarEnfrentamiento(internal.getUrl(), m.getId(), resultado);
         
         // Actualizamos la lista de enfrentamientos en setups
-        Internal.updateSetups(); //*** Pasarle la ID del setup
+        internal.updateSetup(Integer.parseInt(nSetup)); //*** Pasarle la ID del setup
         // Pintamos el nuevo enfrentamiento en las setups de la interfaz
         pintarEnfrentamientoSetup(Integer.parseInt(nSetup));
         // Eliminamos enfrentamiento nuevo de próximos enfrentamientos

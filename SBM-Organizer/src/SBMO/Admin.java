@@ -9,28 +9,32 @@ import java.util.Collections;
 public class Admin {
     
     private Challonge challonge;
-    
-    public Admin(String api_link) {
-        challonge = new Challonge(api_link);
+    private String apiKey;
+    private String url;
+
+    public Admin(String apiKey, String url) {
+        this.challonge = new Challonge(apiKey);
+        this.apiKey = apiKey;
+        this.url = url;
     }
     
     /* API */
     
-    public List<Match> listaEnfrentamientos(String urlPath) {
-        final ListMatchRequest request = new ListMatchRequest.Builder(urlPath).withState("open").build();
+    public List<Match> listaEnfrentamientos() {
+        final ListMatchRequest request = new ListMatchRequest.Builder(getUrl()).withState("open").build();
         final List<Match> matches = challonge.listMatches(request);
         return matches;
     }
     
-    public Participant mostrarParticipante(String urlPath, int participantID) {
-        final GetParticipantRequest request = new GetParticipantRequest.Builder(urlPath, participantID)
+    public Participant mostrarParticipante(int participantID) {
+        final GetParticipantRequest request = new GetParticipantRequest.Builder(getUrl(), participantID)
                 .build();
         final Participant participant = challonge.getParticipant(request);
         return participant;
     }
     
-    public void actualizarEnfrentamiento(String urlPath, int matchID, MatchScore ms) {
-        final UpdateMatchRequest request = new UpdateMatchRequest.Builder(urlPath, matchID)
+    public void actualizarEnfrentamiento(int matchID, MatchScore ms) {
+        final UpdateMatchRequest request = new UpdateMatchRequest.Builder(getUrl(), matchID)
                 .withMatchScores(Collections.singletonList(ms))
                 .doTie(true)
                 .build();
@@ -38,8 +42,8 @@ public class Admin {
         // *** RETURN?
     }
     
-    public List<Participant> listaParticipantes(String urlPath) {
-        final ListParticipantRequest request = new ListParticipantRequest(urlPath);
+    public List<Participant> listaParticipantes() {
+        final ListParticipantRequest request = new ListParticipantRequest(getUrl());
         final List<Participant> participants = challonge.listParticipants(request);
         return participants;
     }
@@ -94,5 +98,10 @@ public class Admin {
         return r;
     }
     
+    /* GET SET */
+    
+    public String getUrl() {
+        return url;
+    }
     
 }
