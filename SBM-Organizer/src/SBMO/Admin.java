@@ -8,9 +8,9 @@ import java.util.Collections;
 /* Hacemos las peticiones a challonge */
 public class Admin {
     
-    private Challonge challonge;
+    private static Challonge challonge;
     private String apiKey;
-    private String url;
+    private static String url;
 
     public Admin(String apiKey, String url) {
         this.challonge = new Challonge(apiKey);
@@ -20,7 +20,7 @@ public class Admin {
     
     /* API */
     
-    public List<Match> listaEnfrentamientos() {
+    public static List<Match> listaEnfrentamientos() {
         final ListMatchRequest request = new ListMatchRequest.Builder(getUrl()).withState("open").build();
         final List<Match> matches = challonge.listMatches(request);
         return matches;
@@ -39,7 +39,6 @@ public class Admin {
                 .withWinnerId(wID)
                 .build();
         final Match match = challonge.updateMatch(request);
-        // *** RETURN?
     }
     
     public List<Participant> listaParticipantes() {
@@ -100,7 +99,7 @@ public class Admin {
     
     /* GET SET */
     
-    public String getUrl() {
+    public static String getUrl() {
         return url;
     }
     

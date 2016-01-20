@@ -38,8 +38,14 @@ public class Internal {
     // Actualizamos una setup
     public void updateSetup(int ID){
         // Sacamos el próximo enfrentamiento
-        Match m = getColaEnfrentamientos().poll();
+        Match m;
+        // Si no hay más enfrentamientos lo rellenamos
+        if(getColaEnfrentamientos().size() == 0){
+            List<Match> listaEnf = Admin.listaEnfrentamientos(); // *** FK admin
+            this.setQueue(listaEnf);
+        }
         
+         m = getColaEnfrentamientos().poll();
         // Creamos la setup con sus datos
         Setup s = new Setup(ID,getMapaParticipantes().get(m.getPlayerOneId()),getMapaParticipantes().get(m.getPlayerTwoId()),m);
         
@@ -51,7 +57,6 @@ public class Internal {
     public String devolverNombre(int pID){
         return this.getMapaParticipantes().get(pID).getName();
     }
-    
     
         
     /* GET Y SETS */
