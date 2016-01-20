@@ -291,6 +291,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
                 // Sacamos el texto del formulario
                 JTextField texto = (JTextField) entry.getValue();
                 resultados[i] = texto.getText();
+                texto.setText("");
             }
             // Alternamos entre 0 y 1
             if(i==0)
@@ -301,7 +302,6 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         // Borramos las etiquetas
         jPanel1.remove(nombresLabel.get("j1_"+Integer.parseInt(nSetup)));
         jPanel1.remove(nombresLabel.get("j2_"+Integer.parseInt(nSetup)));
-        // *** Habría que poner a 0 los contadores
         // Actualizamos la interfaz
         jPanel1.revalidate();
         jPanel1.repaint();

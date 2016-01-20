@@ -20,6 +20,8 @@ public class Admin {
     
     /* API */
     
+    // *** Hay que hacer que esta lista esté ordenada, primero W1, luego L1, etc
+    
     public static List<Match> listaEnfrentamientos() {
         final ListMatchRequest request = new ListMatchRequest.Builder(getUrl()).withState("open").build();
         final List<Match> matches = challonge.listMatches(request);
