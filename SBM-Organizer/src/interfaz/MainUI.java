@@ -26,7 +26,6 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
     DefaultListModel finalizadosEnf = new DefaultListModel();
     
     // Le pasamos Admin e Internal
-    // *** Alternativa a static
     private Admin admin;
     private Internal internal;
 
