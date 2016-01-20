@@ -329,11 +329,10 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         // Borramos el enfrentamiento
         internal.getEnfrentamientosSetups()[Integer.parseInt(nSetup)] = null;
         // Actualizamos Challonge
-        //if(!Main.debug) //*** CAMBIAR ESTO
-            //admin.actualizarEnfrentamiento(internal.getUrl(), m.getId(), resultado);
+        admin.actualizarEnfrentamiento(m.getId(), resultado,this.getWinner(mNew));
         
         // Actualizamos la lista de enfrentamientos en setups
-        internal.updateSetup(Integer.parseInt(nSetup)); //*** Pasarle la ID del setup
+        internal.updateSetup(Integer.parseInt(nSetup));
         // Pintamos el nuevo enfrentamiento en las setups de la interfaz
         pintarEnfrentamientoSetup(Integer.parseInt(nSetup));
         // Eliminamos enfrentamiento nuevo de próximos enfrentamientos
@@ -342,6 +341,16 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         actualizarEnfFinalizados(updated);
         updated++;
         
+    }
+    
+    private int getWinner(Match m){
+        int a = m.getScores().get(0).getPlayerOneScore();
+        int b = m.getScores().get(0).getPlayerTwoScore();
+        
+        if(a > b)
+            return m.getPlayerOneId();
+        else
+            return m.getPlayerTwoId();
     }
    
     

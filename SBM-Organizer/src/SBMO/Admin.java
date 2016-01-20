@@ -33,10 +33,10 @@ public class Admin {
         return participant;
     }
     
-    public void actualizarEnfrentamiento(int matchID, MatchScore ms) {
+    public void actualizarEnfrentamiento(int matchID, MatchScore ms,int wID) {
         final UpdateMatchRequest request = new UpdateMatchRequest.Builder(getUrl(), matchID)
                 .withMatchScores(Collections.singletonList(ms))
-                .doTie(true)
+                .withWinnerId(wID)
                 .build();
         final Match match = challonge.updateMatch(request);
         // *** RETURN?
