@@ -4,6 +4,7 @@ import challonge.model.Match;
 import challonge.model.Participant;
 import interfaz.*;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /* Controlador */
 
@@ -43,8 +44,13 @@ public class Main {
         i.setQueue(listaEnf);
         
         // Sacamos los n enfrentamientos de la cola y los metemos en la lista de Enfrentamientos en Setups
+        if(i.getnSetups() > i.getColaEnfrentamientos().size()){
+            i.setnSetups(i.getnSetups() - (i.getnSetups()-i.getColaEnfrentamientos().size()) );
+            JOptionPane.showMessageDialog(null, "¡Por fin podemos jugar freeplays!");
+        }
+        
         for(int j=0;j<i.getnSetups();j++)
-            i.updateSetup(j);
+                i.updateSetup(j);
         
         // Llamamos a la interfaz principal
         MainUI ventana = new MainUI(a,i);

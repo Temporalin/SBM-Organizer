@@ -38,19 +38,12 @@ public class Internal {
     // Actualizamos una setup
     public void updateSetup(int ID){
         // Sacamos el próximo enfrentamiento
-        Match m;
-        // Si no hay más enfrentamientos lo rellenamos
-        if(getColaEnfrentamientos().size() == 0){
-            List<Match> listaEnf = Admin.listaEnfrentamientos(); // *** FK admin
-            this.setQueue(listaEnf);
-        }
-        
-         m = getColaEnfrentamientos().poll();
+        Match m = this.getColaEnfrentamientos().poll();
         // Creamos la setup con sus datos
-        Setup s = new Setup(ID,getMapaParticipantes().get(m.getPlayerOneId()),getMapaParticipantes().get(m.getPlayerTwoId()),m);
+        Setup s = new Setup(ID,this.getMapaParticipantes().get(m.getPlayerOneId()),this.getMapaParticipantes().get(m.getPlayerTwoId()),m);
         
         // Metemos la nueva Setup en los enfrentamientos jugándose
-        getEnfrentamientosSetups()[ID] = s;
+        this.getEnfrentamientosSetups()[ID] = s;
     }
     
     // Devuelve el nombre a partir de la ID del Participante

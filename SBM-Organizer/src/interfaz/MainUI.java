@@ -321,12 +321,22 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         // Actualizamos Challonge
         admin.actualizarEnfrentamiento(m.getId(), resultado,this.getWinner(mNew));
         
+        // Si no hay más enfrentamientos lo rellenamos
+        if(internal.getColaEnfrentamientos().isEmpty()){
+            List<Match> listaEnf = Admin.listaEnfrentamientos(); // *** FK admin
+            internal.setQueue(listaEnf);
+        }
         // Actualizamos la lista de enfrentamientos en setups
         internal.updateSetup(Integer.parseInt(nSetup));
+        
+        // Pintamos nuevos próximos enfrentamientos
+        cargarProximosEnf();
+        
         // Pintamos el nuevo enfrentamiento en las setups de la interfaz
         pintarEnfrentamientoSetup(Integer.parseInt(nSetup));
         // Eliminamos enfrentamiento nuevo de próximos enfrentamientos
-        proximosEnf.removeElementAt(0);
+        if(!proximosEnf.isEmpty())
+            proximosEnf.removeElementAt(0);
         // Actualizamos lista de enfrentamientos finalizados de la interfaz
         actualizarEnfFinalizados(updated);
         updated++;
