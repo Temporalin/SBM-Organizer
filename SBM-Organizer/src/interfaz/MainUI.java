@@ -1,6 +1,8 @@
 package interfaz;
 
 import SBMO.*;
+import java.awt.GridLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
@@ -143,7 +145,6 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
     
     // Inicializamos la interfaz generando los elementos necesarios
     public void inicializarInterfaz(int nSetups){
-        
         /* Próximos enfrentamientos */
         
         JList listaIzq = new JList(proximosEnf);
@@ -163,38 +164,62 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         jPanel3.add(scrollDer);
         
         /* Setups */
+        int nfilas = (int) (nSetups/6) + 1;
+        jPanel1.setLayout(new GridLayout(nfilas, 6));
         
         for(int i=0;i<nSetups;i++){
-            
+            javax.swing.JPanel setupPanel = new JPanel(); 
+            setupPanel.setLayout(new BoxLayout(setupPanel, BoxLayout.Y_AXIS));
+                        
             // Posición horizontal
             int k;
-            if(i==0)
-                k = espacio;
-            else
-                k = (espacio*i)+(anchura*i);
+            if(i==0) k = espacio;
+            else k = (espacio*i)+(anchura*i);
             
             // Etiqueta Setup #
             JLabel setup = new JLabel();
             if (i > 9) setup.setText("Setup "+i);
             else setup.setText("Setup 0"+i);
             setup.setBounds(k, 10, anchura, 30);
-            jPanel1.add(setup);
+            setupPanel.add(setup);
+            setupPanel.add(Box.createRigidArea(new Dimension(0,5)));
+
+            // Jugador 1            
+            javax.swing.JPanel jug1 = new JPanel(); 
+            jug1.setLayout(new BoxLayout(jug1, BoxLayout.X_AXIS));
             
-            pintarEnfrentamientoSetup(i);
-            
-            // Formulario resultados 1
             JTextField r1 = new JTextField();
-            r1.setSize(30,20);
-            r1.setBounds(k-espacio, 40, 30, 20);
-            jPanel1.add(r1);
+            r1.setSize(40,20);
+            r1.setMaximumSize(new Dimension(40,20));
+            jug1.add(r1);
             listForm.put("j1_"+i,r1);
             
-            // Formulario resultados 2
+            JLabel j1 = new JLabel();
+            j1.setText(internal.devolverNombre(internal.getEnfrentamientosSetups()[i].getOne().getId())); 
+            j1.setBounds(k, 30, anchura, 30);
+            jug1.add(j1);
+            nombresLabel.put("j1_"+i,j1);
+            
+            setupPanel.add(jug1);
+            
+            // Jugador 2
+            javax.swing.JPanel jug2 = new JPanel(); 
+            jug2.setLayout(new BoxLayout(jug2, BoxLayout.X_AXIS));
+            
             JTextField r2 = new JTextField();
-            r2.setSize(30,20);
-            r2.setBounds(k-espacio, 65, 30, 20);
-            jPanel1.add(r2);
+            r2.setSize(40,20);
+            r2.setMaximumSize(new Dimension(40,20));
+            jug2.add(r2);
             listForm.put("j2_"+i,r2);
+            
+            JLabel j2 = new JLabel();
+            j2.setText(internal.devolverNombre(internal.getEnfrentamientosSetups()[i].getTwo().getId()));
+            j2.setBounds(k, 60, anchura, 30);
+            jug2.add(j2);
+            nombresLabel.put("j2_"+i,j2);
+            
+            setupPanel.add(jug2);
+            setupPanel.add(Box.createRigidArea(new Dimension(0,5)));            
             
             // Botón actualizar
             JButton update = new JButton();
@@ -202,11 +227,14 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
             else update.setText("Update0"+i);
             update.setSize(80,30);
             update.setBounds(k-espacio,90,100,30);
-            jPanel1.add(update);
+            setupPanel.add(update);
+            setupPanel.add(Box.createRigidArea(new Dimension(0,20)));
             
             // Añadir evento
             update.addActionListener(this);
-        }   
+            
+            jPanel1.add(setupPanel);
+        }
     }
     
     private void pintarEnfrentamientoSetup(int numeroSetup){
