@@ -18,7 +18,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
     
     // Medidas para las setups
     private int espacio = 30;
-    private int anchura = 100;
+    private int anchura = 150;
     
     private JScrollPane scrollIzq = new JScrollPane();
     private JScrollPane scrollDer = new JScrollPane();
@@ -186,7 +186,8 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
             
             // Etiqueta Setup #
             JLabel setup = new JLabel();
-            setup.setText("Setup "+i); // *** Hay que cambiar 0 por 00
+            if (i > 9) setup.setText("Setup "+i);
+            else setup.setText("Setup 0"+i);
             setup.setBounds(k, 10, anchura, 30);
             jPanel1.add(setup);
             
@@ -208,14 +209,14 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
             
             // Botón actualizar
             JButton update = new JButton();
-            update.setText("Update"+i); // *** Hay que cambiar 0 por 00
+            if (i > 9) update.setText("Update"+i);
+            else update.setText("Update0"+i);
             update.setSize(80,30);
-            update.setBounds(k-espacio,90,80,30);
+            update.setBounds(k-espacio,90,100,30);
             jPanel1.add(update);
             
             // Añadir evento
             update.addActionListener(this);
-            
         }   
     }
     
@@ -264,12 +265,12 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
     public void actualizarEnfFinalizados(int i){
     
         finalizadosEnf.addElement(
-                    Admin.returnResultados(internal.getListaFinalizados().get(i))[0]
-            + " " +
                     internal.devolverNombre(internal.getListaFinalizados().get(i).getPlayerOneId())
-            +" vs "+
+            + "  " +
+                    Admin.returnResultados(internal.getListaFinalizados().get(i))[0]
+            +" - "+
                     Admin.returnResultados(internal.getListaFinalizados().get(i))[1]
-            + " " +
+            + "  " +
                     internal.devolverNombre(internal.getListaFinalizados().get(i).getPlayerTwoId())
         );
         
