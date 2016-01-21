@@ -29,7 +29,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         
         // Interfaz
         initComponents();        
-        inicializarInterfaz(i.getnSetups());
+        inicializarInterfaz(i.nOS);
         
         // Cargamos los próximos enfrentamientos
         cargarProximosEnf();        
