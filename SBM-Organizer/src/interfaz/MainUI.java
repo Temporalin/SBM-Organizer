@@ -162,21 +162,21 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         myTimers =  new int[nSetups];
         setupPanels = new javax.swing.JPanel[nSetups];
         
-        int numFights = admin.listaEnfrentamientos().size();
-        
+        int numFights = admin.listaEnfrentamientos().size();        
         for(int i=0;i<nSetups;i++){
-            if (i < numFights) {//internal.getCurrentSetups().get(i) != null) {
+            if (i < numFights) {
+                int r = internal.getCurrentMatches().get(i).getRound();
                 String n1 = internal.getCurrentSetups().get(i).getOne().getName();
                 String n2 = internal.getCurrentSetups().get(i).getTwo().getName();
-                setupPanels[i] = getPanelSetup(i,n1,n2);
-            } else {
+                setupPanels[i] = getPanelSetup(i,n1,n2,r);
+            } else {    //Si hay mas setups que partidas, pasa a haber freeplays
                 setupPanels[i] = getPanelSetupFreeplay(i);
             }
             jPanel1.add(setupPanels[i]);
         }
     }
     
-    private javax.swing.JPanel getPanelSetup(int numSetup, String nombrej1, String nombrej2) {
+    private javax.swing.JPanel getPanelSetup(int numSetup, String nombrej1, String nombrej2, int r) {
         javax.swing.JPanel auxPanel = new JPanel(); 
         auxPanel.setLayout(new BoxLayout(auxPanel, BoxLayout.Y_AXIS));
                         
@@ -229,11 +229,15 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         update.setSize(80,30);
         auxPanel.add(update);
         
+        // Temporizador y ronda
         timeLabels[numSetup] = new JLabel();
         myTimers[numSetup] = 900;
         int min = (int) myTimers[numSetup]/60;
         int sec = myTimers[numSetup]%60;
-        timeLabels[numSetup].setText(min+":"+sec);
+        String WL;
+        if (r > 0) WL = "W"+r;
+        else WL = "L"+(-r);
+        timeLabels[numSetup].setText(WL+"     "+min+":"+sec);
         auxPanel.add(timeLabels[numSetup]);
         
         auxPanel.add(Box.createRigidArea(new Dimension(0,20)));           
@@ -386,7 +390,11 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
                     --myTimers[i];
                     int min = (int) myTimers[i]/60;
                     int sec = myTimers[i]%60;
-                    timeLabels[i].setText(min+":"+sec);
+                    String WL;
+                    int r = internal.getCurrentMatches().get(i).getRound();
+                    if (r > 0) WL = "W"+r;
+                    else WL = "L"+(-r);
+                    timeLabels[i].setText(WL+"     "+min+":"+sec);
                     if (myTimers[i] == 0) JOptionPane.showMessageDialog(null, "Revisar setup "+i);
                 }
             }
