@@ -28,8 +28,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         this.internal = i;
         
         // Interfaz
-        initComponents();
-        
+        initComponents();        
         inicializarInterfaz(i.getnSetups());
         
         // Cargamos los próximos enfrentamientos
@@ -150,17 +149,22 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         jPanel3.add(scrollDer);
         
         /* Setups */
-        int nfilas = (int) (nSetups/6) + 1;
+        int nfilas = ((int) (nSetups/6)) + 1;
         jPanel1.setLayout(new GridLayout(nfilas, 6));
-        
-        inputTFs = new JTextField[nSetups*2];
-        setupNameLabels = new javax.swing.JLabel[2*nSetups];
-        setupPanels = new javax.swing.JPanel[nSetups];
+         System.out.println(nSetups);
+
+        inputSpinners = new JSpinner[2*16];      
+        setupNameLabels = new javax.swing.JLabel[2*16];
+        setupPanels = new javax.swing.JPanel[16];
         
         for(int i=0;i<nSetups;i++){
-            String n1 = internal.getCurrentSetups().get(i).getOne().getName();
-            String n2 = internal.getCurrentSetups().get(i).getTwo().getName();
-            setupPanels[i] = getPanelSetup(i,n1,n2);
+            if (i < internal.getColaEnfrentamientos().size()) {//internal.getCurrentSetups().get(i) != null) {
+                String n1 = internal.getCurrentSetups().get(i).getOne().getName();
+                String n2 = internal.getCurrentSetups().get(i).getTwo().getName();
+                setupPanels[i] = getPanelSetup(i,n1,n2);
+            } else {
+                setupPanels[i] = getPanelSetupFreeplay(i);
+            }
             jPanel1.add(setupPanels[i]);
         }
     }
@@ -171,19 +175,21 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
                         
         // Etiqueta Setup #
         JLabel setup = new JLabel();
-        if (numSetup > 9) setup.setText("Setup "+numSetup);
-        else setup.setText("Setup 0"+numSetup);
+        setup.setText("Setup "+numSetup);
         auxPanel.add(setup);
         auxPanel.add(Box.createRigidArea(new Dimension(0,5)));
-                
+        
         // Jugador 1            
         javax.swing.JPanel jug1 = new JPanel(); 
         jug1.setLayout(new BoxLayout(jug1, BoxLayout.X_AXIS));
-            
-        inputTFs[numSetup*2] = new JTextField();
-        inputTFs[numSetup*2].setMinimumSize(new Dimension(40,20));
-        inputTFs[numSetup*2].setMaximumSize(new Dimension(40,20));
-        jug1.add(inputTFs[numSetup*2]);     
+        
+        SpinnerListModel resSpinner = new SpinnerListModel(possibleResults);
+        inputSpinners[2*numSetup] = new JSpinner(resSpinner);
+        inputSpinners[numSetup*2].setMinimumSize(new Dimension(40,20));
+        inputSpinners[numSetup*2].setMaximumSize(new Dimension(40,20));
+        jug1.add(inputSpinners[numSetup*2]);
+        jug1.add(Box.createRigidArea(new Dimension(5,0)));
+        //jug1.add(inputTFs[numSetup*2]);     
         setupNameLabels[numSetup*2] = new JLabel();
         setupNameLabels[numSetup*2].setText(nombrej1); 
         jug1.add(setupNameLabels[numSetup*2]);
@@ -194,15 +200,17 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         // Jugador 2
         javax.swing.JPanel jug2 = new JPanel(); 
         jug2.setLayout(new BoxLayout(jug2, BoxLayout.X_AXIS));
-            
-        inputTFs[numSetup*2+1] = new JTextField();
-        inputTFs[numSetup*2+1].setMinimumSize(new Dimension(40,20));
-        inputTFs[numSetup*2+1].setMaximumSize(new Dimension(40,20));
-        jug2.add(inputTFs[numSetup*2+1]);          
+        
+        SpinnerListModel resSpinner2 = new SpinnerListModel(possibleResults);
+        inputSpinners[numSetup*2+1] = new JSpinner(resSpinner2);
+        inputSpinners[numSetup*2+1].setMinimumSize(new Dimension(40,20));
+        inputSpinners[numSetup*2+1].setMaximumSize(new Dimension(40,20));
+        jug2.add(inputSpinners[numSetup*2+1]);
+        jug2.add(Box.createRigidArea(new Dimension(5,0)));        
+        //jug2.add(inputTFs[numSetup*2+1]);
         setupNameLabels[numSetup*2+1] = new JLabel();
         setupNameLabels[numSetup*2+1].setText(nombrej2);
         jug2.add(setupNameLabels[numSetup*2+1]);
-        
         jug2.setAlignmentX( Component.LEFT_ALIGNMENT );
         auxPanel.add(jug2);
         auxPanel.add(Box.createRigidArea(new Dimension(0,5)));   
@@ -216,6 +224,23 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         auxPanel.add(Box.createRigidArea(new Dimension(0,20)));           
         // Añadir evento
         update.addActionListener(this);
+        
+        return auxPanel;
+    }
+    
+    private javax.swing.JPanel getPanelSetupFreeplay(int numSetup) {
+        javax.swing.JPanel auxPanel = new JPanel();
+        auxPanel.setLayout(new BoxLayout(auxPanel, BoxLayout.Y_AXIS));
+            
+        // Etiqueta Setup #
+        JLabel setup = new JLabel();
+        setup.setText("Setup "+numSetup);
+        auxPanel.add(setup);
+        auxPanel.add(Box.createRigidArea(new Dimension(0,10)));    
+        // Etiqueta de freeplays
+        JLabel freeplays = new JLabel();
+        freeplays.setText("FREEPLAYS");
+        auxPanel.add(freeplays);
         
         return auxPanel;
     }
@@ -245,9 +270,8 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
     }
     
     // Enfrentamientos finalizados
-    public void actualizarEnfFinalizados(int i){
-    
-        finalizadosEnf.addElement( //***Se añaden al final del todo, hay que añadirlos al principio
+    public void actualizarEnfFinalizados(int i){    
+        finalizadosEnf.addElement(
                     internal.devolverNombre(internal.getListaFinalizados().get(i).getPlayerOneId())
             + "  " +
                     Admin.returnResultados(internal.getListaFinalizados().get(i))[0]
@@ -256,13 +280,13 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
             + "  " +
                     internal.devolverNombre(internal.getListaFinalizados().get(i).getPlayerTwoId())
         );
-        
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {        
         // Nombre del botón
         String comando = e.getActionCommand();
+        // Cogemos el identificador (ej. 00,12,08)
         String strSetup = comando.substring(6);
         if(strSetup.substring(0,1).equals("0")) strSetup = strSetup.substring(1);
         int nSetup = Integer.parseInt(strSetup);
@@ -271,8 +295,8 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         String[] resultados = new String[2];
         MatchScore resultado;
         
-        resultados[0] = inputTFs[2*nSetup].getText();
-        resultados[1] = inputTFs[2*nSetup+1].getText();
+        resultados[0] = inputSpinners[2*nSetup].getValue().toString();
+        resultados[1] = inputSpinners[2*nSetup+1].getValue().toString();
         
         // Metemos en la lista los jugadores + el resultado
         // *** ENCAPSULAR EN UN NUEVO MÉTODO
@@ -293,9 +317,11 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         
         // Si no hay más enfrentamientos lo rellenamos
         if(internal.getColaEnfrentamientos().isEmpty()){
-            List<Match> listaEnf = admin.listaEnfrentamientos();
-            internal.setQueue(listaEnf);
+            //List<Match> listaEnf = admin.listaEnfrentamientos(); quitar?
+            internal.setQueue(admin.listaEnfrentamientos());
         }
+        // Si no hay mas enfrentamientos, se pasa a freeplay
+        if(internal.getColaEnfrentamientos().isEmpty()) setupPanels[nSetup] = getPanelSetupFreeplay(nSetup);
         
         // Si quedan menos enfrentamientos que setups activamos las freeplays
         //***internal.checkFreeplays(); Funciona mal, aún no implementarlo
@@ -313,7 +339,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
             proximosEnf.removeElementAt(0);
         // Actualizamos lista de enfrentamientos finalizados de la interfaz
         actualizarEnfFinalizados(updated);
-        updated++;   
+        updated++;
     }
     
     private int getWinner(Match m){
@@ -323,9 +349,13 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         else return m.getPlayerTwoId();
     }
    
+    String[] possibleResults = {"0","1","2","3","4","5"};
+    private JSpinner[] inputSpinners;
+    
     private javax.swing.JPanel[] setupPanels;
-    private JTextField[] inputTFs;
     private javax.swing.JLabel[] setupNameLabels;
+    private javax.swing.JLabel[] myTimers;
+    private javax.swing.Timer clock;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
