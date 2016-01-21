@@ -12,11 +12,7 @@ import challonge.model.*;
 public class MainUI extends javax.swing.JFrame implements ActionListener {
     
     private int updated = 0;
-    
-    // Mapa que guarda los campos de texto
-    private Map<String,JTextField> listForm = new HashMap();
-    // Mapa que guarda las etiquetas
-    private Map<String,JLabel> nombresLabel = new HashMap();
+    private int numSetups = 0;
     
     // Medidas para las setups
     private int espacio = 30;
@@ -145,19 +141,17 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
     
     // Inicializamos la interfaz generando los elementos necesarios
     public void inicializarInterfaz(int nSetups){
+        numSetups = nSetups;
+        
         /* Próximos enfrentamientos */
-        
-        JList listaIzq = new JList(proximosEnf);
-        
+        JList listaIzq = new JList(proximosEnf);        
         scrollIzq.setViewportView(listaIzq);
         scrollIzq.setSize(250,150);
         scrollIzq.setBounds(50, 10, 250, 150);
         jPanel2.add(scrollIzq);
         
-        /* Enfrentamientos finalizados */
-        
-        JList listaDer = new JList(finalizadosEnf);
-        
+        /* Enfrentamientos finalizados */        
+        JList listaDer = new JList(finalizadosEnf);        
         scrollDer.setViewportView(listaDer);
         scrollDer.setSize(250,150);
         scrollDer.setBounds(50, 10, 250, 150);
@@ -167,102 +161,81 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         int nfilas = (int) (nSetups/6) + 1;
         jPanel1.setLayout(new GridLayout(nfilas, 6));
         
+        inputTFs = new JTextField[nSetups*2];
+        setupNameLabels = new javax.swing.JLabel[2*nSetups];
+        setupPanels = new javax.swing.JPanel[nSetups];
+        
         for(int i=0;i<nSetups;i++){
-            javax.swing.JPanel setupPanel = new JPanel(); 
-            setupPanel.setLayout(new BoxLayout(setupPanel, BoxLayout.Y_AXIS));
-                        
-            // Posición horizontal
-            int k;
-            if(i==0) k = espacio;
-            else k = (espacio*i)+(anchura*i);
-            
-            // Etiqueta Setup #
-            JLabel setup = new JLabel();
-            if (i > 9) setup.setText("Setup "+i);
-            else setup.setText("Setup 0"+i);
-            setup.setBounds(k, 10, anchura, 30);
-            setupPanel.add(setup);
-            setupPanel.add(Box.createRigidArea(new Dimension(0,5)));
-
-            // Jugador 1            
-            javax.swing.JPanel jug1 = new JPanel(); 
-            jug1.setLayout(new BoxLayout(jug1, BoxLayout.X_AXIS));
-            
-            JTextField r1 = new JTextField();
-            r1.setSize(40,20);
-            r1.setMaximumSize(new Dimension(40,20));
-            jug1.add(r1);
-            listForm.put("j1_"+i,r1);
-            
-            JLabel j1 = new JLabel();
-            j1.setText(internal.devolverNombre(internal.getEnfrentamientosSetups()[i].getOne().getId())); 
-            j1.setBounds(k, 30, anchura, 30);
-            jug1.add(j1);
-            nombresLabel.put("j1_"+i,j1);
-            
-            setupPanel.add(jug1);
-            
-            // Jugador 2
-            javax.swing.JPanel jug2 = new JPanel(); 
-            jug2.setLayout(new BoxLayout(jug2, BoxLayout.X_AXIS));
-            
-            JTextField r2 = new JTextField();
-            r2.setSize(40,20);
-            r2.setMaximumSize(new Dimension(40,20));
-            jug2.add(r2);
-            listForm.put("j2_"+i,r2);
-            
-            JLabel j2 = new JLabel();
-            j2.setText(internal.devolverNombre(internal.getEnfrentamientosSetups()[i].getTwo().getId()));
-            j2.setBounds(k, 60, anchura, 30);
-            jug2.add(j2);
-            nombresLabel.put("j2_"+i,j2);
-            
-            setupPanel.add(jug2);
-            setupPanel.add(Box.createRigidArea(new Dimension(0,5)));            
-            
-            // Botón actualizar
-            JButton update = new JButton();
-            if (i > 9) update.setText("Update"+i);
-            else update.setText("Update0"+i);
-            update.setSize(80,30);
-            update.setBounds(k-espacio,90,100,30);
-            setupPanel.add(update);
-            setupPanel.add(Box.createRigidArea(new Dimension(0,20)));
-            
-            // Añadir evento
-            update.addActionListener(this);
-            
-            jPanel1.add(setupPanel);
+            String n1 = internal.devolverNombre(internal.getEnfrentamientosSetups()[i].getOne().getId());
+            String n2 = internal.devolverNombre(internal.getEnfrentamientosSetups()[i].getTwo().getId());
+            setupPanels[i] = getPanelSetup(i,n1,n2);
+            jPanel1.add(setupPanels[i]);
         }
     }
     
-    private void pintarEnfrentamientoSetup(int numeroSetup){
-    
-        int k;
-        if(numeroSetup==0)
-            k = espacio;
-        else
-            k = (espacio*numeroSetup)+(anchura*numeroSetup);
+    private javax.swing.JPanel getPanelSetup(int numSetup, String nombrej1, String nombrej2) {
+        javax.swing.JPanel auxPanel = new JPanel(); 
+        auxPanel.setLayout(new BoxLayout(auxPanel, BoxLayout.Y_AXIS));
+                        
+        // Etiqueta Setup #
+        JLabel setup = new JLabel();
+        if (numSetup > 9) setup.setText("Setup "+numSetup);
+        else setup.setText("Setup 0"+numSetup);
+        auxPanel.add(setup);
+        auxPanel.add(Box.createRigidArea(new Dimension(0,5)));
+                
+        // Jugador 1            
+        javax.swing.JPanel jug1 = new JPanel(); 
+        jug1.setLayout(new BoxLayout(jug1, BoxLayout.X_AXIS));
+            
+        inputTFs[numSetup*2] = new JTextField();
+        inputTFs[numSetup*2].setMinimumSize(new Dimension(40,20));
+        inputTFs[numSetup*2].setMaximumSize(new Dimension(40,20));
+        jug1.add(inputTFs[numSetup*2]);     
+        setupNameLabels[numSetup*2] = new JLabel();
+        setupNameLabels[numSetup*2].setText(nombrej1); 
+        jug1.add(setupNameLabels[numSetup*2]);
+            
+        auxPanel.add(jug1);
         
-        // Jugador 1
-        JLabel j1 = new JLabel();
-        j1.setText(internal.devolverNombre(internal.getEnfrentamientosSetups()[numeroSetup].getOne().getId())); 
-        j1.setBounds(k, 30, anchura, 30);
-        jPanel1.add(j1);
-        nombresLabel.put("j1_"+numeroSetup,j1);
-
         // Jugador 2
-        JLabel j2 = new JLabel();
-        j2.setText(internal.devolverNombre(internal.getEnfrentamientosSetups()[numeroSetup].getTwo().getId()));
-        j2.setBounds(k, 60, anchura, 30);
-        jPanel1.add(j2);
-        nombresLabel.put("j2_"+numeroSetup,j2);
+        javax.swing.JPanel jug2 = new JPanel(); 
+        jug2.setLayout(new BoxLayout(jug2, BoxLayout.X_AXIS));
+            
+        inputTFs[numSetup*2+1] = new JTextField();
+        inputTFs[numSetup*2+1].setMinimumSize(new Dimension(40,20));
+        inputTFs[numSetup*2+1].setMaximumSize(new Dimension(40,20));
+        jug2.add(inputTFs[numSetup*2+1]);          
+        setupNameLabels[numSetup*2+1] = new JLabel();
+        setupNameLabels[numSetup*2+1].setText(nombrej2);
+        jug2.add(setupNameLabels[numSetup*2+1]);
+            
+        auxPanel.add(jug2);
+        auxPanel.add(Box.createRigidArea(new Dimension(0,5)));   
+        
+        // Botón actualizar
+        JButton update = new JButton();
+        if (numSetup > 9) update.setText("Update"+numSetup);
+        else update.setText("Update0"+numSetup);
+        update.setSize(80,30);
+        auxPanel.add(update);
+        auxPanel.add(Box.createRigidArea(new Dimension(0,20)));           
+        // Añadir evento
+        update.addActionListener(this);
+        
+        return auxPanel;
+    }
+    
+    private void pintarEnfrentamientoSetup(int numeroSetup){
+        String nj1 = internal.devolverNombre(internal.getEnfrentamientosSetups()[numeroSetup].getOne().getId());
+        String nj2 = internal.devolverNombre(internal.getEnfrentamientosSetups()[numeroSetup].getTwo().getId());
+
+        setupNameLabels[2*numeroSetup].setText(nj1);
+        setupNameLabels[2*numeroSetup+1].setText(nj2);
     }
     
     // Próximos enfrentamientos
-    public void cargarProximosEnf(){
-       
+    public void cargarProximosEnf(){       
         Queue<Match> colaAux = new LinkedList(internal.getColaEnfrentamientos());
         Match matchAux;
         
@@ -294,49 +267,24 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
     }
     
     @Override
-    public void actionPerformed(ActionEvent e) {
-        
+    public void actionPerformed(ActionEvent e) {        
         // Nombre del botón
         String comando = e.getActionCommand();
         // *** Cogemos el identificador (ej. 00)
-        String nSetup = comando.substring(comando.length() - 1);
+        String strSetup = comando.substring(6);
+        if(strSetup.substring(0,1).equals("0")) strSetup = strSetup.substring(1);
+        int nSetup = Integer.parseInt(strSetup);
         
         // Variable auxiliar con los resultados de las casillas
         String[] resultados = new String[2];
         MatchScore resultado;
-        int i = 0; // Guarda la posición para el string resultados
         
-        Iterator it = listForm.entrySet().iterator(); // *** Hay que cambiar 0 por 00
-        while (it.hasNext()) {
-            // Iteramos
-            Map.Entry entry = (Map.Entry)it.next();
-            
-            // Identificador del formulario (ej. j1_0)
-            String key = entry.getKey().toString();
-            
-            // Si el identificador del botón es igual al número de setup
-            if(key.substring(key.length() - 1).equals(nSetup)){
-                // Sacamos el texto del formulario
-                JTextField texto = (JTextField) entry.getValue();
-                resultados[i] = texto.getText();
-                texto.setText("");
-            }
-            // Alternamos entre 0 y 1
-            if(i==0)
-                i++;
-            else
-                i = 0;
-        }
-        // Borramos las etiquetas
-        jPanel1.remove(nombresLabel.get("j1_"+Integer.parseInt(nSetup)));
-        jPanel1.remove(nombresLabel.get("j2_"+Integer.parseInt(nSetup)));
-        // Actualizamos la interfaz
-        jPanel1.revalidate();
-        jPanel1.repaint();
+        resultados[0] = inputTFs[2*nSetup].getText();
+        resultados[1] = inputTFs[2*nSetup+1].getText();
         
         // Metemos en la lista los jugadores + el resultado
         // *** ENCAPSULAR EN UN NUEVO MÉTODO
-        Match m = internal.getEnfrentamientosSetups()[Integer.parseInt(nSetup)].getMatch();
+        Match m = internal.getEnfrentamientosSetups()[nSetup].getMatch();
         resultado = new MatchScore(Integer.parseInt(resultados[0]),Integer.parseInt(resultados[1]));
         List<MatchScore> lM = new ArrayList();
         lM.add(resultado);
@@ -345,7 +293,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         // Actualizamos lista de finalizados
         internal.getListaFinalizados().add(mNew);        
         // Borramos el enfrentamiento
-        internal.getEnfrentamientosSetups()[Integer.parseInt(nSetup)] = null;
+        internal.getEnfrentamientosSetups()[nSetup] = null;
         // Actualizamos Challonge
         admin.actualizarEnfrentamiento(m.getId(), resultado,this.getWinner(mNew));
         
@@ -355,34 +303,31 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
             internal.setQueue(listaEnf);
         }
         // Actualizamos la lista de enfrentamientos en setups
-        internal.updateSetup(Integer.parseInt(nSetup));
+        internal.updateSetup(nSetup);
         
         // Pintamos nuevos próximos enfrentamientos
         cargarProximosEnf();
         
         // Pintamos el nuevo enfrentamiento en las setups de la interfaz
-        pintarEnfrentamientoSetup(Integer.parseInt(nSetup));
+        pintarEnfrentamientoSetup(nSetup);
         // Eliminamos enfrentamiento nuevo de próximos enfrentamientos
         if(!proximosEnf.isEmpty())
             proximosEnf.removeElementAt(0);
         // Actualizamos lista de enfrentamientos finalizados de la interfaz
         actualizarEnfFinalizados(updated);
-        updated++;
-        
+        updated++;   
     }
     
     private int getWinner(Match m){
         int a = m.getScores().get(0).getPlayerOneScore();
-        int b = m.getScores().get(0).getPlayerTwoScore();
-        
-        if(a > b)
-            return m.getPlayerOneId();
-        else
-            return m.getPlayerTwoId();
+        int b = m.getScores().get(0).getPlayerTwoScore();        
+        if(a > b) return m.getPlayerOneId();
+        else return m.getPlayerTwoId();
     }
    
-   
-
+    private javax.swing.JPanel[] setupPanels;
+    private JTextField[] inputTFs;
+    private javax.swing.JLabel[] setupNameLabels;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
