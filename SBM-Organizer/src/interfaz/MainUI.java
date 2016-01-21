@@ -15,17 +15,17 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
     private int numSetups = 0;
     
     // Medidas para las setups
-    private int espacio = 30;
-    private int anchura = 150;
+    private final int espacio = 30;
+    private final int anchura = 150;
     
-    private JScrollPane scrollIzq = new JScrollPane();
-    private JScrollPane scrollDer = new JScrollPane();
+    private final JScrollPane scrollIzq = new JScrollPane();
+    private final JScrollPane scrollDer = new JScrollPane();
     DefaultListModel proximosEnf = new DefaultListModel();
     DefaultListModel finalizadosEnf = new DefaultListModel();
     
     // Le pasamos Admin e Internal
-    private Admin admin;
-    private Internal internal;
+    private final Admin admin;
+    private final Internal internal;
 
     public MainUI(Admin a, Internal i) {
         
@@ -166,8 +166,8 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         setupPanels = new javax.swing.JPanel[nSetups];
         
         for(int i=0;i<nSetups;i++){
-            String n1 = internal.devolverNombre(internal.getEnfrentamientosSetups()[i].getOne().getId());
-            String n2 = internal.devolverNombre(internal.getEnfrentamientosSetups()[i].getTwo().getId());
+            String n1 = internal.getCurrentSetups().get(i).getOne().getName();
+            String n2 = internal.getCurrentSetups().get(i).getTwo().getName();
             setupPanels[i] = getPanelSetup(i,n1,n2);
             jPanel1.add(setupPanels[i]);
         }
@@ -227,8 +227,8 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
     }
     
     private void pintarEnfrentamientoSetup(int numeroSetup){
-        String nj1 = internal.devolverNombre(internal.getEnfrentamientosSetups()[numeroSetup].getOne().getId());
-        String nj2 = internal.devolverNombre(internal.getEnfrentamientosSetups()[numeroSetup].getTwo().getId());
+        String nj1 = internal.getCurrentSetups().get(numeroSetup).getOne().getName();
+        String nj2 = internal.getCurrentSetups().get(numeroSetup).getTwo().getName();
 
         setupNameLabels[2*numeroSetup].setText(nj1);
         setupNameLabels[2*numeroSetup+1].setText(nj2);
@@ -284,7 +284,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         
         // Metemos en la lista los jugadores + el resultado
         // *** ENCAPSULAR EN UN NUEVO MÉTODO
-        Match m = internal.getCurrentSetups().get(Integer.parseInt(nSetup)).getMatch();
+        Match m = internal.getCurrentSetups().get(nSetup).getMatch();
         resultado = new MatchScore(Integer.parseInt(resultados[0]),Integer.parseInt(resultados[1]));
         List<MatchScore> lM = new ArrayList();
         lM.add(resultado);
@@ -293,7 +293,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         // Actualizamos lista de finalizados
         internal.getListaFinalizados().add(mNew);
         // Borramos el enfrentamiento
-        internal.getCurrentSetups().remove(Integer.parseInt(nSetup));
+        internal.getCurrentSetups().remove(nSetup);
 
         // Actualizamos Challonge
         admin.actualizarEnfrentamiento(m.getId(), resultado,this.getWinner(mNew));
