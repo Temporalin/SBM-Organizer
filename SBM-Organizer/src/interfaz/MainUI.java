@@ -158,7 +158,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         setupPanels = new javax.swing.JPanel[16];
         
         for(int i=0;i<nSetups;i++){
-            if (i < internal.getColaEnfrentamientos().size()) {//internal.getCurrentSetups().get(i) != null) {
+            if (true) {//i < internal.getColaEnfrentamientos().size()) {//internal.getCurrentSetups().get(i) != null) {
                 String n1 = internal.getCurrentSetups().get(i).getOne().getName();
                 String n2 = internal.getCurrentSetups().get(i).getTwo().getName();
                 setupPanels[i] = getPanelSetup(i,n1,n2);
