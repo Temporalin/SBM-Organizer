@@ -148,13 +148,19 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         scrollDer.setBounds(50, 10, 250, 150);
         jPanel3.add(scrollDer);
         
+        /* Timer */
+        clock = new javax.swing.Timer(1000,taskPerformer);
+        clock.start();
+        
         /* Setups */
         int nfilas = ((int) (nSetups/6)) + 1;
         jPanel1.setLayout(new GridLayout(nfilas, 6));
 
-        inputSpinners = new JSpinner[2*16];      
-        setupNameLabels = new javax.swing.JLabel[2*16];
-        setupPanels = new javax.swing.JPanel[16];
+        inputSpinners = new JSpinner[2*nSetups];      
+        setupNameLabels = new javax.swing.JLabel[2*nSetups];
+        timeLabels = new javax.swing.JLabel[nSetups];
+        myTimers =  new int[nSetups];
+        setupPanels = new javax.swing.JPanel[nSetups];
         
         int numFights = admin.listaEnfrentamientos().size();
         
@@ -214,7 +220,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         jug2.add(setupNameLabels[numSetup*2+1]);
         jug2.setAlignmentX( Component.LEFT_ALIGNMENT );
         auxPanel.add(jug2);
-        auxPanel.add(Box.createRigidArea(new Dimension(0,5)));   
+        auxPanel.add(Box.createRigidArea(new Dimension(0,15)));   
         
         // Botón actualizar
         JButton update = new JButton();
@@ -222,6 +228,14 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         else update.setText("Update0"+numSetup);
         update.setSize(80,30);
         auxPanel.add(update);
+        
+        timeLabels[numSetup] = new JLabel();
+        myTimers[numSetup] = 900;
+        int min = (int) myTimers[numSetup]/60;
+        int sec = myTimers[numSetup]%60;
+        timeLabels[numSetup].setText(min+":"+sec);
+        auxPanel.add(timeLabels[numSetup]);
+        
         auxPanel.add(Box.createRigidArea(new Dimension(0,20)));           
         // Añadir evento
         update.addActionListener(this);
@@ -249,9 +263,14 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
     private void pintarEnfrentamientoSetup(int numeroSetup){
         String nj1 = internal.getCurrentSetups().get(numeroSetup).getOne().getName();
         String nj2 = internal.getCurrentSetups().get(numeroSetup).getTwo().getName();
-
+            
         setupNameLabels[2*numeroSetup].setText(nj1);
         setupNameLabels[2*numeroSetup+1].setText(nj2);
+        
+        myTimers[numeroSetup] = 900;
+        int min = (int) myTimers[numeroSetup]/60;
+        int sec = myTimers[numeroSetup]%60;
+        timeLabels[numeroSetup].setText(min+":"+sec);
     }
     
     // Próximos enfrentamientos
@@ -349,13 +368,29 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         if(a > b) return m.getPlayerOneId();
         else return m.getPlayerTwoId();
     }
-   
+    
+    // Cada segundo, cambian los relojes
+    ActionListener taskPerformer = new ActionListener() {
+        public void actionPerformed(ActionEvent evt) {
+            for (int i = 0; i < myTimers.length; ++i) {
+                if (myTimers[i] > 0) {
+                    --myTimers[i];
+                    int min = (int) myTimers[i]/60;
+                    int sec = myTimers[i]%60;
+                    timeLabels[i].setText(min+":"+sec);
+                    if (myTimers[i] == 0) JOptionPane.showMessageDialog(null, "Revisar setup "+i);
+                }
+            }
+        }
+    };
+    
     String[] possibleResults = {"0","1","2","3","4","5"};
     private JSpinner[] inputSpinners;
     
     private javax.swing.JPanel[] setupPanels;
     private javax.swing.JLabel[] setupNameLabels;
-    private javax.swing.JLabel[] myTimers;
+    private javax.swing.JLabel[] timeLabels;
+    private int[] myTimers;
     private javax.swing.Timer clock;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel2;
