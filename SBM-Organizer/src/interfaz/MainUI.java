@@ -1,6 +1,7 @@
 package interfaz;
 
 import SBMO.*;
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -12,11 +13,6 @@ import challonge.model.*;
 public class MainUI extends javax.swing.JFrame implements ActionListener {
     
     private int updated = 0;
-    private int numSetups = 0;
-    
-    // Medidas para las setups
-    private final int espacio = 30;
-    private final int anchura = 150;
     
     private final JScrollPane scrollIzq = new JScrollPane();
     private final JScrollPane scrollDer = new JScrollPane();
@@ -27,8 +23,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
     private final Admin admin;
     private final Internal internal;
 
-    public MainUI(Admin a, Internal i) {
-        
+    public MainUI(Admin a, Internal i) {        
         this.admin = a;
         this.internal = i;
         
@@ -38,8 +33,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         inicializarInterfaz(i.getnSetups());
         
         // Cargamos los próximos enfrentamientos
-        cargarProximosEnf();
-        
+        cargarProximosEnf();        
     }
     
     @SuppressWarnings("unchecked")
@@ -140,9 +134,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
 
     
     // Inicializamos la interfaz generando los elementos necesarios
-    public void inicializarInterfaz(int nSetups){
-        this.numSetups = nSetups;
-        
+    public void inicializarInterfaz(int nSetups){        
         /* Próximos enfrentamientos */
         JList listaIzq = new JList(proximosEnf);        
         scrollIzq.setViewportView(listaIzq);
@@ -195,7 +187,8 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         setupNameLabels[numSetup*2] = new JLabel();
         setupNameLabels[numSetup*2].setText(nombrej1); 
         jug1.add(setupNameLabels[numSetup*2]);
-            
+        
+        jug1.setAlignmentX( Component.LEFT_ALIGNMENT );
         auxPanel.add(jug1);
         
         // Jugador 2
@@ -209,7 +202,8 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         setupNameLabels[numSetup*2+1] = new JLabel();
         setupNameLabels[numSetup*2+1].setText(nombrej2);
         jug2.add(setupNameLabels[numSetup*2+1]);
-            
+        
+        jug2.setAlignmentX( Component.LEFT_ALIGNMENT );
         auxPanel.add(jug2);
         auxPanel.add(Box.createRigidArea(new Dimension(0,5)));   
         
