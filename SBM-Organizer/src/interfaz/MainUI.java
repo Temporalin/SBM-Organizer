@@ -285,7 +285,11 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
             int p1 = matchAux.getPlayerOneId();
             int p2 = matchAux.getPlayerTwoId();
             
-            proximosEnf.addElement(internal.devolverNombre(p1)+" vs "+internal.devolverNombre(p2));
+            String WL;
+            int R = matchAux.getRound();
+            if (R > 0) WL = "W"+R;
+            else WL = "L"+(-R); 
+            proximosEnf.addElement(WL+" "+internal.devolverNombre(p1)+" vs "+internal.devolverNombre(p2));
         }
     }
     
