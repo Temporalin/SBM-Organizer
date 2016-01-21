@@ -348,7 +348,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         if(internal.getColaEnfrentamientos().isEmpty()) setupPanels[nSetup] = getPanelSetupFreeplay(nSetup);
         
         // Si quedan menos enfrentamientos que setups activamos las freeplays
-        //***internal.checkFreeplays(); Funciona mal, aún no implementarlo
+        //internal.checkFreeplays();
         
         // Actualizamos la lista de enfrentamientos en setups
         internal.updateSetup(nSetup);

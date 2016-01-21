@@ -71,7 +71,6 @@ public class Internal {
     public void checkFreeplays(){
         if(this.getnSetups() > this.getColaEnfrentamientos().size()){
             this.setnSetups(this.getnSetups() - (this.getnSetups() - this.getColaEnfrentamientos().size()) );
-            JOptionPane.showMessageDialog(null, "¡Por fin podemos jugar freeplays!"); // Poner en la UI un cartelito de Freeplays en X setups
         }
     }    
     /* GET Y SETS */
