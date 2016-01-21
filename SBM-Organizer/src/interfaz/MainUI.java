@@ -141,7 +141,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
     
     // Inicializamos la interfaz generando los elementos necesarios
     public void inicializarInterfaz(int nSetups){
-        numSetups = nSetups;
+        this.numSetups = nSetups;
         
         /* Próximos enfrentamientos */
         JList listaIzq = new JList(proximosEnf);        
@@ -236,7 +236,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
     
     // Próximos enfrentamientos
     public void cargarProximosEnf(){       
-        Queue<Match> colaAux = new LinkedList(internal.getColaEnfrentamientos());
+        PriorityQueue<Match> colaAux = new PriorityQueue(internal.getColaEnfrentamientos());
         Match matchAux;
         
         for(int i=0;i<internal.getColaEnfrentamientos().size();i++){
@@ -248,13 +248,12 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
             
             proximosEnf.addElement(internal.devolverNombre(p1)+" vs "+internal.devolverNombre(p2));
         }
-
     }
     
     // Enfrentamientos finalizados
     public void actualizarEnfFinalizados(int i){
     
-        finalizadosEnf.addElement(
+        finalizadosEnf.addElement( //***Se añaden al final del todo, hay que añadirlos al principio
                     internal.devolverNombre(internal.getListaFinalizados().get(i).getPlayerOneId())
             + "  " +
                     Admin.returnResultados(internal.getListaFinalizados().get(i))[0]
@@ -270,7 +269,6 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {        
         // Nombre del botón
         String comando = e.getActionCommand();
-        // *** Cogemos el identificador (ej. 00)
         String strSetup = comando.substring(6);
         if(strSetup.substring(0,1).equals("0")) strSetup = strSetup.substring(1);
         int nSetup = Integer.parseInt(strSetup);
@@ -294,6 +292,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         internal.getListaFinalizados().add(mNew);
         // Borramos el enfrentamiento
         internal.getCurrentSetups().remove(nSetup);
+        internal.getCurrentMatches().remove(nSetup);
 
         // Actualizamos Challonge
         admin.actualizarEnfrentamiento(m.getId(), resultado,this.getWinner(mNew));

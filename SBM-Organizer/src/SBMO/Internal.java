@@ -18,6 +18,8 @@ public class Internal {
     
     private PriorityQueue<Match> colaEnfrentamientos; // Cola con TODOS los enfrentamientos
     private Map<Integer,Setup> currentSetups; //Mapa con los matches que se están jugando
+    private Map<Integer,Match> currentMatches; // Mapa de SetupID / Match*
+    //* Podríamos privarnos de ella pero tendríamos un bucle O(n^2) en setQueue()
     private List<Match> listaFinalizados; // Lista de matches finalizados
     private Map<Integer,Participant> mapaParticipantes; // Mapa de Id/Participante
     //private Queue<Integer> nextSetup; por si se necesita
@@ -27,6 +29,8 @@ public class Internal {
         currentSetups = new HashMap();
         listaFinalizados = new ArrayList();
         mapaParticipantes = new HashMap();
+        this.currentMatches = new HashMap();
+        this.colaEnfrentamientos = new PriorityQueue(new ComparadorMatches());
     }
     
     /* MÉTODOS */ 
@@ -34,9 +38,9 @@ public class Internal {
     // Inicializamos cola de enfrentamientos
     public void setQueue(List<Match> enfrentamientos){
         
-        this.colaEnfrentamientos = new PriorityQueue(new ComparadorMatches());
         for(Match e:enfrentamientos){
-            if(!this.getCurrentSetups().containsValue(e)) // Si no se está jugando el Match...
+            // Si no se está jugando el enfrentamiento...
+            if(!this.currentMatches.containsValue(e))
                 this.colaEnfrentamientos.add(e);
         }
         
@@ -48,6 +52,9 @@ public class Internal {
         Match m = this.getColaEnfrentamientos().poll();
         // Creamos la setup con sus datos
         Setup s = new Setup(ID,this.getMapaParticipantes().get(m.getPlayerOneId()),this.getMapaParticipantes().get(m.getPlayerTwoId()),m);
+        
+        // Metemos el Match en el mapa
+        this.getCurrentMatches().put(ID,m);
         
         // Metemos la nueva Setup en los enfrentamientos jugándose
         this.getCurrentSetups().put(ID,s);
@@ -102,5 +109,11 @@ public class Internal {
     public void setMapaParticipantes(Map<Integer, Participant> mapaPartipantes) {
         this.mapaParticipantes = mapaPartipantes;
     }
+
+    public Map<Integer, Match> getCurrentMatches() {
+        return currentMatches;
+    }
+    
+    
     
 }
