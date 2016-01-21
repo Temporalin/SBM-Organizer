@@ -19,7 +19,7 @@ public class Internal {
     
     private PriorityQueue<Match> colaEnfrentamientos; // Cola con TODOS los enfrentamientos
     private Map<Integer,Setup> currentSetups; //Mapa con los matches que se están jugando
-    private Map<Integer,Match> currentMatches; // Mapa de SetupID / Match*
+    private Map<Integer,Match> currentMatches; // Mapa de MatchID / Match*
     //* Podríamos privarnos de ella pero tendríamos un bucle O(n^2) en setQueue()
     private List<Match> listaFinalizados; // Lista de matches finalizados
     private Map<Integer,Participant> mapaParticipantes; // Mapa de Id/Participante
@@ -43,7 +43,7 @@ public class Internal {
         for(Match e:enfrentamientos){
 
             // Si no se está jugando el enfrentamiento...
-            if(!this.currentMatches.containsValue(e)) //*** Comparar jugadores
+            if(!(this.currentMatches.containsKey(e.getId())))
                 this.colaEnfrentamientos.offer(e);
         }
         
@@ -57,7 +57,7 @@ public class Internal {
         Setup s = new Setup(ID,this.getMapaParticipantes().get(m.getPlayerOneId()),this.getMapaParticipantes().get(m.getPlayerTwoId()),m);
         
         // Metemos el Match en el mapa
-        this.getCurrentMatches().put(ID,m);
+        this.getCurrentMatches().put(m.getId(),m);
         
         // Metemos la nueva Setup en los enfrentamientos jugándose
         this.getCurrentSetups().put(ID,s);
@@ -72,10 +72,10 @@ public class Internal {
         if(this.getnSetups() > this.getColaEnfrentamientos().size()){
             this.setnSetups(this.getnSetups() - (this.getnSetups() - this.getColaEnfrentamientos().size()) );
         }
-    }    
+    }
+    
     /* GET Y SETS */
     
-
     public int getnSetups() {
         return nSetups;
     }

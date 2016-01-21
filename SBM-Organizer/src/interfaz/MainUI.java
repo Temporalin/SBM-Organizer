@@ -165,9 +165,10 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         int numFights = admin.listaEnfrentamientos().size();        
         for(int i=0;i<nSetups;i++){
             if (i < numFights) {
-                int r = internal.getCurrentMatches().get(i).getRound();
-                String n1 = internal.getCurrentSetups().get(i).getOne().getName();
-                String n2 = internal.getCurrentSetups().get(i).getTwo().getName();
+                Setup s = internal.getCurrentSetups().get(i);
+                int r = s.getMatch().getRound();
+                String n1 = s.getOne().getName();
+                String n2 = s.getTwo().getName();
                 setupPanels[i] = getPanelSetup(i,n1,n2,r);
             } else {    //Si hay mas setups que partidas, pasa a haber freeplays
                 setupPanels[i] = getPanelSetupFreeplay(i);
@@ -359,6 +360,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         //internal.checkFreeplays();
         
         // Actualizamos la lista de enfrentamientos en setups
+        // ** Si no hay más (se acaba el torneo) mostrar algo
         internal.updateSetup(nSetup);
         
         // Eliminamos enfrentamiento nuevo de próximos enfrentamientos
@@ -391,7 +393,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
                     int min = (int) myTimers[i]/60;
                     int sec = myTimers[i]%60;
                     String WL;
-                    int r = internal.getCurrentMatches().get(i).getRound();
+                    int r = internal.getCurrentSetups().get(i).getMatch().getRound();
                     if (r > 0) WL = "W"+r;
                     else WL = "L"+(-r);
                     timeLabels[i].setText(WL+"     "+min+":"+sec);

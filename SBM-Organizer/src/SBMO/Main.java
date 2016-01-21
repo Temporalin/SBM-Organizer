@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 /* Controlador */
 
 public class Main {
-    public static final Boolean debug = true;
+    public static final Boolean debug = false;
     
     public static void main(String[] args) {
         
