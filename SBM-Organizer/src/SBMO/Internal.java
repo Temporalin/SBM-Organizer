@@ -15,6 +15,7 @@ public class Internal {
     
 
     private int nSetups;
+    public int nOS;
     
     private PriorityQueue<Match> colaEnfrentamientos; // Cola con TODOS los enfrentamientos
     private Map<Integer,Setup> currentSetups; //Mapa con los matches que se están jugando
@@ -26,6 +27,7 @@ public class Internal {
 
     public Internal(int nSetups) {
         this.nSetups = nSetups;
+        this.nOS = nSetups;
         currentSetups = new HashMap();
         listaFinalizados = new ArrayList();
         mapaParticipantes = new HashMap();
