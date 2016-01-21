@@ -295,6 +295,9 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         if(internal.getColaEnfrentamientos().isEmpty()){
             List<Match> listaEnf = admin.listaEnfrentamientos();
             internal.setQueue(listaEnf);
+            
+            // Pintamos nuevos próximos enfrentamientos
+            cargarProximosEnf();
         }
         
         // Si quedan menos enfrentamientos que setups activamos las freeplays
@@ -303,14 +306,15 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         // Actualizamos la lista de enfrentamientos en setups
         internal.updateSetup(nSetup);
         
-        // Pintamos nuevos próximos enfrentamientos
-        cargarProximosEnf();
-        
-        // Pintamos el nuevo enfrentamiento en las setups de la interfaz
-        pintarEnfrentamientoSetup(nSetup);
         // Eliminamos enfrentamiento nuevo de próximos enfrentamientos
         if(!proximosEnf.isEmpty())
             proximosEnf.removeElementAt(0);
+        
+        
+        
+        // Pintamos el nuevo enfrentamiento en las setups de la interfaz
+        pintarEnfrentamientoSetup(nSetup);
+        
         // Actualizamos lista de enfrentamientos finalizados de la interfaz
         actualizarEnfFinalizados(updated);
         updated++;   

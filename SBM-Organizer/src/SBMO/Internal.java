@@ -39,9 +39,10 @@ public class Internal {
     public void setQueue(List<Match> enfrentamientos){
         
         for(Match e:enfrentamientos){
+
             // Si no se está jugando el enfrentamiento...
-            if(!this.currentMatches.containsValue(e))
-                this.colaEnfrentamientos.add(e);
+            if(!this.currentMatches.containsValue(e)) //*** Comparar jugadores
+                this.colaEnfrentamientos.offer(e);
         }
         
     }

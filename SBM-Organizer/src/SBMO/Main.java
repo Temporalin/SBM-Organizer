@@ -44,7 +44,7 @@ public class Main {
         i.setQueue(listaEnf);
         
         // Si quedan menos enfrentamientos que setups activamos las freeplays
-        i.checkFreeplays();
+        //i.checkFreeplays();
         
         // Sacamos los n enfrentamientos de la cola y los metemos en la lista de Enfrentamientos en Setups
         for(int j=0;j<i.getnSetups();j++)
