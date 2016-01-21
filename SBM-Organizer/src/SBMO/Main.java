@@ -38,17 +38,15 @@ public class Main {
         
         // Metemos los participantes en el mapa
         for(Participant p:listaPar)
-            i.mapaParticipantes.put(p.getId(),p);
+            i.getMapaParticipantes().put(p.getId(),p);
         
         // Metemos la lista de enfrentamientos en la cola
         i.setQueue(listaEnf);
         
-        // Sacamos los n enfrentamientos de la cola y los metemos en la lista de Enfrentamientos en Setups
-        if(i.getnSetups() > i.getColaEnfrentamientos().size()){
-            i.setnSetups(i.getnSetups() - (i.getnSetups()-i.getColaEnfrentamientos().size()) );
-            JOptionPane.showMessageDialog(null, "¡Por fin podemos jugar freeplays!");
-        }
+        // Si quedan menos enfrentamientos que setups activamos las freeplays
+        i.checkFreeplays();
         
+        // Sacamos los n enfrentamientos de la cola y los metemos en la lista de Enfrentamientos en Setups
         for(int j=0;j<i.getnSetups();j++)
                 i.updateSetup(j);
         

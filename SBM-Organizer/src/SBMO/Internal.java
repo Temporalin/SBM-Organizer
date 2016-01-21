@@ -3,6 +3,7 @@ package SBMO;
 import java.util.*;
 import challonge.model.Match;
 import challonge.model.Participant;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 /* Aquí iría la gestión interna del programa */
@@ -15,15 +16,15 @@ public class Internal {
 
     private int nSetups;
     
-    public Queue<Match> colaEnfrentamientos; // Cola con TODOS los enfrentamientos
-    public Setup[] enfrentamientosSetups; // Lista de matches con los enfrentamientos para cada setup
-    public List<Match> listaFinalizados; // Lista de matches finalizados
-    public Map<Integer,Participant> mapaParticipantes; // Mapa de Id/Participante
+    private PriorityQueue<Match> colaEnfrentamientos; // Cola con TODOS los enfrentamientos
+    private Map<Integer,Setup> currentSetups; //Mapa con los matches que se están jugando
+    private List<Match> listaFinalizados; // Lista de matches finalizados
+    private Map<Integer,Participant> mapaParticipantes; // Mapa de Id/Participante
     //private Queue<Integer> nextSetup; por si se necesita
 
     public Internal(int nSetups) {
         this.nSetups = nSetups;
-        enfrentamientosSetups = new Setup[nSetups];
+        currentSetups = new HashMap();
         listaFinalizados = new ArrayList();
         mapaParticipantes = new HashMap();
     }
@@ -32,10 +33,16 @@ public class Internal {
     
     // Inicializamos cola de enfrentamientos
     public void setQueue(List<Match> enfrentamientos){
-        setColaEnfrentamientos(new LinkedList(enfrentamientos));       
+        
+        this.colaEnfrentamientos = new PriorityQueue(new ComparadorMatches());
+        for(Match e:enfrentamientos){
+            if(!this.getCurrentSetups().containsValue(e)) // Si no se está jugando el Match...
+                this.colaEnfrentamientos.add(e);
+        }
+        
     }
     
-    // Actualizamos una setup
+    // Actualizamos una setup con un enfrentamiento (de los próximos)
     public void updateSetup(int ID){
         // Sacamos el próximo enfrentamiento
         Match m = this.getColaEnfrentamientos().poll();
@@ -43,7 +50,7 @@ public class Internal {
         Setup s = new Setup(ID,this.getMapaParticipantes().get(m.getPlayerOneId()),this.getMapaParticipantes().get(m.getPlayerTwoId()),m);
         
         // Metemos la nueva Setup en los enfrentamientos jugándose
-        this.getEnfrentamientosSetups()[ID] = s;
+        this.getCurrentSetups().put(ID,s);
     }
     
     // Devuelve el nombre a partir de la ID del Participante
@@ -51,7 +58,12 @@ public class Internal {
         return this.getMapaParticipantes().get(pID).getName();
     }
     
-        
+    public void checkFreeplays(){
+        if(this.getnSetups() > this.getColaEnfrentamientos().size()){
+            this.setnSetups(this.getnSetups() - (this.getnSetups() - this.getColaEnfrentamientos().size()) );
+            JOptionPane.showMessageDialog(null, "¡Por fin podemos jugar freeplays!"); // Poner en la UI un cartelito de Freeplays en X setups
+        }
+    }    
     /* GET Y SETS */
     
 
@@ -62,21 +74,17 @@ public class Internal {
     public void setnSetups(int n) {
         this.nSetups = n;
     }
-
-    public void setColaEnfrentamientos(Queue<Match> c) {
-        this.colaEnfrentamientos = c;
-    }
     
-    public Queue<Match> getColaEnfrentamientos() {
+    public PriorityQueue<Match> getColaEnfrentamientos() {
         return colaEnfrentamientos;
     }
 
-    public void setEnfrentamientosSetups(Setup[] e) {
-        this.enfrentamientosSetups = e;
+    public Map<Integer, Setup> getCurrentSetups() {
+        return currentSetups;
     }
 
-    public Setup[] getEnfrentamientosSetups() {
-        return enfrentamientosSetups;
+    public void setCurrentSetups(Map<Integer, Setup> currentSetups) {
+        this.currentSetups = currentSetups;
     }
 
     public List<Match> getListaFinalizados() {
@@ -94,6 +102,5 @@ public class Internal {
     public void setMapaParticipantes(Map<Integer, Participant> mapaPartipantes) {
         this.mapaParticipantes = mapaPartipantes;
     }
-
     
 }

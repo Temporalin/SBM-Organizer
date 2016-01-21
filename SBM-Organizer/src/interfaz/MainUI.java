@@ -219,14 +219,14 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         
         // Jugador 1
         JLabel j1 = new JLabel();
-        j1.setText(internal.devolverNombre(internal.getEnfrentamientosSetups()[numeroSetup].getOne().getId())); 
+        j1.setText(internal.getCurrentSetups().get(numeroSetup).getOne().getName()); 
         j1.setBounds(k, 30, anchura, 30);
         jPanel1.add(j1);
         nombresLabel.put("j1_"+numeroSetup,j1);
 
         // Jugador 2
         JLabel j2 = new JLabel();
-        j2.setText(internal.devolverNombre(internal.getEnfrentamientosSetups()[numeroSetup].getTwo().getId()));
+        j2.setText(internal.getCurrentSetups().get(numeroSetup).getTwo().getName());
         j2.setBounds(k, 60, anchura, 30);
         jPanel1.add(j2);
         nombresLabel.put("j2_"+numeroSetup,j2);
@@ -308,24 +308,28 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         
         // Metemos en la lista los jugadores + el resultado
         // *** ENCAPSULAR EN UN NUEVO MÉTODO
-        Match m = internal.getEnfrentamientosSetups()[Integer.parseInt(nSetup)].getMatch();
+        Match m = internal.getCurrentSetups().get(Integer.parseInt(nSetup)).getMatch();
         resultado = new MatchScore(Integer.parseInt(resultados[0]),Integer.parseInt(resultados[1]));
         List<MatchScore> lM = new ArrayList();
         lM.add(resultado);
         Match mNew = new Match(m,lM);
         
         // Actualizamos lista de finalizados
-        internal.getListaFinalizados().add(mNew);        
+        internal.getListaFinalizados().add(mNew);
         // Borramos el enfrentamiento
-        internal.getEnfrentamientosSetups()[Integer.parseInt(nSetup)] = null;
+        internal.getCurrentSetups().remove(Integer.parseInt(nSetup));
         // Actualizamos Challonge
         admin.actualizarEnfrentamiento(m.getId(), resultado,this.getWinner(mNew));
         
         // Si no hay más enfrentamientos lo rellenamos
         if(internal.getColaEnfrentamientos().isEmpty()){
-            List<Match> listaEnf = Admin.listaEnfrentamientos(); // *** FK admin
+            List<Match> listaEnf = admin.listaEnfrentamientos();
             internal.setQueue(listaEnf);
         }
+        
+        // Si quedan menos enfrentamientos que setups activamos las freeplays
+        //***internal.checkFreeplays(); Funciona mal, aún no implementarlo
+        
         // Actualizamos la lista de enfrentamientos en setups
         internal.updateSetup(Integer.parseInt(nSetup));
         

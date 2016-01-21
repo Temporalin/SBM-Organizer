@@ -4,6 +4,7 @@ import challonge.model.Match;
 import challonge.model.Participant;
 
 public class Setup {
+    
     private int number;
     private String name;
     private Participant one;
