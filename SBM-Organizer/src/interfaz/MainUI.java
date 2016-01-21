@@ -151,14 +151,15 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         /* Setups */
         int nfilas = ((int) (nSetups/6)) + 1;
         jPanel1.setLayout(new GridLayout(nfilas, 6));
-         System.out.println(nSetups);
 
         inputSpinners = new JSpinner[2*16];      
         setupNameLabels = new javax.swing.JLabel[2*16];
         setupPanels = new javax.swing.JPanel[16];
         
+        int numFights = admin.listaEnfrentamientos().size();
+        
         for(int i=0;i<nSetups;i++){
-            if (true) {//i < internal.getColaEnfrentamientos().size()) {//internal.getCurrentSetups().get(i) != null) {
+            if (i < numFights) {//internal.getCurrentSetups().get(i) != null) {
                 String n1 = internal.getCurrentSetups().get(i).getOne().getName();
                 String n2 = internal.getCurrentSetups().get(i).getTwo().getName();
                 setupPanels[i] = getPanelSetup(i,n1,n2);
