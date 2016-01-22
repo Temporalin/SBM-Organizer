@@ -13,6 +13,7 @@ import challonge.model.*;
 public class MainUI extends javax.swing.JFrame implements ActionListener {
     
     private int updated = 0;
+    public Set<Integer> freeSetups = new HashSet<>();
     
     private final JScrollPane scrollIzq = new JScrollPane();
     private final JScrollPane scrollDer = new JScrollPane();
@@ -344,6 +345,9 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         // Actualizamos Challonge
         admin.actualizarEnfrentamiento(m.getId(), resultado,this.getWinner(mNew));
         
+        actualizarEnfFinalizados(updated);
+        updated++;
+        
         // Si no hay más enfrentamientos lo rellenamos
         if(internal.getColaEnfrentamientos().isEmpty()){
             List<Match> listaEnf = admin.listaEnfrentamientos();
@@ -354,27 +358,25 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
 
         }
         // Si no hay mas enfrentamientos, se pasa a freeplay
-        if(internal.getColaEnfrentamientos().isEmpty()) setupPanels[nSetup] = getPanelSetupFreeplay(nSetup);
-        
-        // Si quedan menos enfrentamientos que setups activamos las freeplays
-        //internal.checkFreeplays();
-        
-        // Actualizamos la lista de enfrentamientos en setups
-        // ** Si no hay más (se acaba el torneo) mostrar algo
-        internal.updateSetup(nSetup);
-        
-        // Eliminamos enfrentamiento nuevo de próximos enfrentamientos
-        if(!proximosEnf.isEmpty())
+        if(proximosEnf.isEmpty()) {
+            freeSetups.add(nSetup);
+            setupPanels[nSetup] = getPanelSetupFreeplay(nSetup);
+        } else {
+            // Actualizamos la lista de enfrentamientos en setups
+            internal.updateSetup(nSetup);
+            // Eliminamos enfrentamiento nuevo de próximos enfrentamientos
             proximosEnf.removeElementAt(0);
-        
-        
-        
-        // Pintamos el nuevo enfrentamiento en las setups de la interfaz
-        pintarEnfrentamientoSetup(nSetup);
-        
-        // Actualizamos lista de enfrentamientos finalizados de la interfaz
-        actualizarEnfFinalizados(updated);
-        updated++;
+            // Pintamos el nuevo enfrentamiento en las setups de la interfaz
+            pintarEnfrentamientoSetup(nSetup);
+            while (freeSetups.size() > 0 && !proximosEnf.isEmpty()) {
+                // Si hay setups libres y partidas por jugar
+                int setup = freeSetups.iterator().next();
+                freeSetups.remove(setup);
+                internal.updateSetup(setup);
+                proximosEnf.removeElementAt(0);
+                pintarEnfrentamientoSetup(setup);
+            }
+        }
     }
     
     private int getWinner(Match m){
