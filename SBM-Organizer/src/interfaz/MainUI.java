@@ -300,8 +300,12 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
     }
     
     // Enfrentamientos finalizados
-    public void actualizarEnfFinalizados(int i){    
-        finalizadosEnf.addElement(
+    public void actualizarEnfFinalizados(int i){
+        String WL;
+        int R = internal.getListaFinalizados().get(i).getRound();
+        if (R > 0) WL = "W"+R;
+        else WL = "L"+(-R); 
+        finalizadosEnf.addElement(WL + "  " +
                     internal.devolverNombre(internal.getListaFinalizados().get(i).getPlayerOneId())
             + "  " +
                     Admin.returnResultados(internal.getListaFinalizados().get(i))[0]
@@ -314,9 +318,8 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
     
     @Override
     public void actionPerformed(ActionEvent e) {        
-        // Nombre del botón
+        // Cogemos el identificador del setup
         String comando = e.getActionCommand();
-        // Cogemos el identificador (ej. 00,12,08)
         String strSetup = comando.substring(6);
         if(strSetup.substring(0,1).equals("0")) strSetup = strSetup.substring(1);
         int nSetup = Integer.parseInt(strSetup);
@@ -365,7 +368,10 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         // Si no hay mas enfrentamientos, se pasa a freeplay
         if(proximosEnf.isEmpty()) {
             freeSetups.add(nSetup);
+            for (int i = nSetup; i < setupPanels.length; ++i) jPanel1.remove(setupPanels[i]);
+            setupPanels[nSetup] = new JPanel();
             setupPanels[nSetup] = getPanelSetupFreeplay(nSetup);
+            for (int i = nSetup; i < setupPanels.length; ++i) jPanel1.add(setupPanels[i]);
         } else {
             // Actualizamos la lista de enfrentamientos en setups
             internal.updateSetup(nSetup);
@@ -395,7 +401,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
     ActionListener taskPerformer = new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
             for (int i = 0; i < myTimers.length; ++i) {
-                if (myTimers[i] > 0) {
+                if (myTimers[i] > 0 && !freeSetups.contains(i)) {
                     --myTimers[i];
                     int min = (int) myTimers[i]/60;
                     int sec = myTimers[i]%60;
