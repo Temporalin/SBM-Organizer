@@ -36,6 +36,118 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         cargarProximosEnf();        
     }
     
+    private void customInitComponents() {
+        jPanel1 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("SBM Organizer");
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 607, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 229, Short.MAX_VALUE)
+        );
+
+        jLabel2.setText("Próximos Enfrentamientos");
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel2.setToolTipText("");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 304, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 154, Short.MAX_VALUE)
+        );
+
+        jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jLabel3.setText("Enfrentamientos Finalizados");
+        
+        //javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+        getContentPane().add(jPanel1);
+        
+        JPanel pendientes = new javax.swing.JPanel();
+        pendientes.setLayout(new BoxLayout(pendientes, BoxLayout.Y_AXIS)); 
+        pendientes.add(jLabel2);
+        pendientes.add(jPanel2);
+        
+        JPanel finalizados = new javax.swing.JPanel();
+        finalizados.setLayout(new BoxLayout(finalizados, BoxLayout.Y_AXIS));
+        finalizados.add(jLabel3);
+        finalizados.add(jPanel3);        
+        
+        JPanel listas = new javax.swing.JPanel();
+        listas.setLayout(new BoxLayout(listas, BoxLayout.X_AXIS));
+        listas.add(pendientes);
+        listas.add(finalizados);
+        
+        getContentPane().add(jPanel1);
+        getContentPane().add(listas);
+        
+        /*layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(54, 54, 54)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 121, Short.MAX_VALUE)
+                //.addComponent(jLabel3)
+                .addGap(62, 62, 62))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );*/
+
+        pack();
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -273,10 +385,15 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         setupNameLabels[2*numeroSetup].setText(nj1);
         setupNameLabels[2*numeroSetup+1].setText(nj2);
         
+        String WL;
+        int r = internal.getCurrentSetups().get(numeroSetup).getMatch().getRound();
+        if (r > 0) WL = "W"+r;
+        else WL = "L"+(-r);
+        
         myTimers[numeroSetup] = 900;
         int min = (int) myTimers[numeroSetup]/60;
         int sec = myTimers[numeroSetup]%60;
-        timeLabels[numeroSetup].setText(min+":"+sec);
+        timeLabels[numeroSetup].setText(WL+"     "+min+":"+sec);
     }
     
     // Próximos enfrentamientos
@@ -382,6 +499,10 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
             // Si hay setups libres y partidas por jugar
             while (freeSetups.size() > 0 && !proximosEnf.isEmpty()) {
                 int setup = freeSetups.iterator().next();
+                for (int i = setup; i < setupPanels.length; ++i) jPanel1.remove(setupPanels[i]);
+                setupPanels[setup] = new JPanel();
+                setupPanels[setup] = getPanelSetup(setup,"","",0);
+                for (int i = setup; i < setupPanels.length; ++i) jPanel1.add(setupPanels[i]);
                 freeSetups.remove(setup);
                 internal.updateSetup(setup);
                 proximosEnf.removeElementAt(0);
