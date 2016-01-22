@@ -328,6 +328,11 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         resultados[0] = inputSpinners[2*nSetup].getValue().toString();
         resultados[1] = inputSpinners[2*nSetup+1].getValue().toString();
         
+        if (resultados[0] == resultados[1]) {
+            JOptionPane.showMessageDialog(null, "There can't be a draw");
+            return;
+        }
+        
         // Metemos en la lista los jugadores + el resultado
         // *** ENCAPSULAR EN UN NUEVO MÉTODO
         Match m = internal.getCurrentSetups().get(nSetup).getMatch();
@@ -368,8 +373,8 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
             proximosEnf.removeElementAt(0);
             // Pintamos el nuevo enfrentamiento en las setups de la interfaz
             pintarEnfrentamientoSetup(nSetup);
+            // Si hay setups libres y partidas por jugar
             while (freeSetups.size() > 0 && !proximosEnf.isEmpty()) {
-                // Si hay setups libres y partidas por jugar
                 int setup = freeSetups.iterator().next();
                 freeSetups.remove(setup);
                 internal.updateSetup(setup);
