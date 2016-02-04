@@ -27,7 +27,6 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
     DefaultListModel proximosEnf = new DefaultListModel();
     DefaultListModel finalizadosEnf = new DefaultListModel();
     
-    // Le pasamos Admin e Internal
     private final Admin admin;
     private final Internal internal;
 
@@ -53,7 +52,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         setTitle("SBM Organizer");
 
         /* Setups Panel */
-        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel1.setBorder(BorderFactory.createEmptyBorder(20,0,0,0));
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -136,11 +135,11 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         clock.start();
         
         /* Setups */
-        int nfilas = ((int) (nSetups/6)) + 1;
-        jPanel1.setLayout(new GridLayout(nfilas, 6));
+        int nfilas = ((int) (nSetups/5)) + 1;
+        jPanel1.setLayout(new GridLayout(nfilas, 5));
 
         inputSpinners = new JSpinner[2*nSetups];      
-        setupNameLabels = new javax.swing.JLabel[2*nSetups];
+        setupNameLabels = new javax.swing.JLabel[nSetups*2];
         timeLabels = new javax.swing.JLabel[nSetups];
         myTimers =  new int[nSetups];
         setupPanels = new javax.swing.JPanel[nSetups];
@@ -153,9 +152,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
                 String n1 = s.getOne().getName();
                 String n2 = s.getTwo().getName();
                 setupPanels[i] = getPanelSetup(i,n1,n2,r);
-            } else {    //Si hay mas setups que partidas, pasa a haber freeplays
-                setupPanels[i] = getPanelSetupFreeplay(i);
-            }
+            } else setupPanels[i] = getPanelSetupFreeplay(i);
             jPanel1.add(setupPanels[i]);
         }
     }
@@ -163,57 +160,57 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
     private javax.swing.JPanel getPanelSetup(int numSetup, String nombrej1, String nombrej2, int r) {
         javax.swing.JPanel auxPanel = new JPanel(); 
         auxPanel.setLayout(new BoxLayout(auxPanel, BoxLayout.Y_AXIS));
-                        
-        // Etiqueta Setup #
+                             
+        // Label Setup #
         JLabel setup = new JLabel();
-        setup.setText("Setup "+numSetup);
+        setup.setText("SETUP "+numSetup);
+        setup.setFont(new Font("Tahoma",Font.BOLD,15));
         auxPanel.add(setup);
+        setup.setAlignmentX( Component.CENTER_ALIGNMENT);
         auxPanel.add(Box.createRigidArea(new Dimension(0,5)));
         
-        // Jugador 1            
-        javax.swing.JPanel jug1 = new JPanel(); 
-        jug1.setLayout(new BoxLayout(jug1, BoxLayout.X_AXIS));
+        // Players
+        javax.swing.JPanel players = new JPanel();
+        players.setLayout(new BoxLayout(players, BoxLayout.X_AXIS));
         
-        String[] possibleResults = {"0","1","2","3","4","5"};
-        
-        SpinnerListModel resSpinner = new SpinnerListModel(possibleResults);
-        inputSpinners[2*numSetup] = new JSpinner(resSpinner);
-        inputSpinners[numSetup*2].setMinimumSize(new Dimension(40,20));
-        inputSpinners[numSetup*2].setMaximumSize(new Dimension(40,20));
-        jug1.add(inputSpinners[numSetup*2]);
-        jug1.add(Box.createRigidArea(new Dimension(5,0)));
-        //jug1.add(inputTFs[numSetup*2]);     
         setupNameLabels[numSetup*2] = new JLabel();
         setupNameLabels[numSetup*2].setText(nombrej1); 
-        jug1.add(setupNameLabels[numSetup*2]);
+        setupNameLabels[numSetup*2].setFont(new Font("Tahoma",Font.PLAIN,14));
+        players.add(setupNameLabels[numSetup*2]);
+        players.add(new JLabel(" vs. "));
+        setupNameLabels[numSetup*2+1] = new JLabel();
+        setupNameLabels[numSetup*2+1].setText(nombrej2); 
+        setupNameLabels[numSetup*2+1].setFont(new Font("Tahoma",Font.PLAIN,14));    
+        players.add(setupNameLabels[numSetup*2+1]);
         
-        jug1.setAlignmentX( Component.LEFT_ALIGNMENT );
-        auxPanel.add(jug1);
+        auxPanel.add(players);
+        auxPanel.add(Box.createRigidArea(new Dimension(0,3)));
+        players.setAlignmentX( Component.CENTER_ALIGNMENT);        
         
-        // Jugador 2
-        javax.swing.JPanel jug2 = new JPanel(); 
-        jug2.setLayout(new BoxLayout(jug2, BoxLayout.X_AXIS));
+        // Results
+        javax.swing.JPanel results = new JPanel(); 
+        results.setLayout(new BoxLayout(results, BoxLayout.X_AXIS));   
+        String[] possibleResults = {"0","1","2","3","4","5"};
+        
+        SpinnerListModel resSpinner1 = new SpinnerListModel(possibleResults);
+        inputSpinners[2*numSetup] = new JSpinner(resSpinner1);
+        inputSpinners[numSetup*2].setMinimumSize(new Dimension(40,20));
+        inputSpinners[numSetup*2].setMaximumSize(new Dimension(40,20));
+        results.add(inputSpinners[numSetup*2]);
+        
+        results.add(Box.createRigidArea(new Dimension(5,0)));      
+        results.add(new JLabel("-"));
+        results.add(Box.createRigidArea(new Dimension(5,0)));
         
         SpinnerListModel resSpinner2 = new SpinnerListModel(possibleResults);
         inputSpinners[numSetup*2+1] = new JSpinner(resSpinner2);
         inputSpinners[numSetup*2+1].setMinimumSize(new Dimension(40,20));
         inputSpinners[numSetup*2+1].setMaximumSize(new Dimension(40,20));
-        jug2.add(inputSpinners[numSetup*2+1]);
-        jug2.add(Box.createRigidArea(new Dimension(5,0)));        
-        //jug2.add(inputTFs[numSetup*2+1]);
-        setupNameLabels[numSetup*2+1] = new JLabel();
-        setupNameLabels[numSetup*2+1].setText(nombrej2);
-        jug2.add(setupNameLabels[numSetup*2+1]);
-        jug2.setAlignmentX( Component.LEFT_ALIGNMENT );
-        auxPanel.add(jug2);
-        auxPanel.add(Box.createRigidArea(new Dimension(0,15)));   
+        results.add(inputSpinners[numSetup*2+1]);   
         
-        // Botón actualizar
-        JButton update = new JButton();
-        if (numSetup > 9) update.setText("Update"+numSetup);
-        else update.setText("Update0"+numSetup);
-        update.setSize(80,30);
-        auxPanel.add(update);
+        auxPanel.add(results);
+        results.setAlignmentX( Component.CENTER_ALIGNMENT);
+        auxPanel.add(Box.createRigidArea(new Dimension(0,14)));
         
         // Temporizador y ronda
         timeLabels[numSetup] = new JLabel();
@@ -225,8 +222,17 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         else WL = "L"+(-r);
         timeLabels[numSetup].setText(WL+"     "+min+":"+sec);
         auxPanel.add(timeLabels[numSetup]);
+        timeLabels[numSetup].setAlignmentX( Component.CENTER_ALIGNMENT);
+        auxPanel.add(Box.createRigidArea(new Dimension(0,2)));    
         
-        auxPanel.add(Box.createRigidArea(new Dimension(0,20)));           
+        // Botón actualizar
+        JButton update = new JButton();
+        if (numSetup > 9) update.setText("Update"+numSetup);
+        else update.setText("Update0"+numSetup);
+        update.setSize(80,30);
+        auxPanel.add(update);
+        update.setAlignmentX( Component.CENTER_ALIGNMENT);
+               
         // Añadir evento
         update.addActionListener(this);
         
