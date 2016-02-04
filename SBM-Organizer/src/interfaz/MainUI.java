@@ -50,6 +50,8 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SBM Organizer");
+        ImageIcon img = new ImageIcon(ClassLoader.getSystemResource( "SBMO/melee64.gif" ) );
+        setIconImage(img.getImage());
 
         /* Setups Panel */
         jPanel1.setBorder(BorderFactory.createEmptyBorder(20,0,0,0));
