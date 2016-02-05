@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
@@ -52,7 +53,7 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         setTitle("SBM Organizer");
         ImageIcon img = new ImageIcon(ClassLoader.getSystemResource( "SBMO/melee64.gif" ) );
         setIconImage(img.getImage());
-
+        
         /* Setups Panel */
         jPanel1.setBorder(BorderFactory.createEmptyBorder(20,0,0,0));
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -101,7 +102,25 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
         listas.setMinimumSize(new Dimension(100,100));
         listas.setMaximumSize(new Dimension(100,1000000));
         listas.add(pendientes);
-        listas.add(finalizados);        
+        listas.add(finalizados);
+
+        ImageIcon imgC = new ImageIcon(ClassLoader.getSystemResource( "SBMO/challonge.png" ) );
+        JButton challonge = new JButton(imgC);
+        challonge.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    String url = "http://www.challonge.com/"+admin.getUrl();
+                    java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
+                } catch (java.io.IOException t) {
+                  System.out.println(t.getMessage());
+                }
+            }
+        });
+        challonge.setMargin(new Insets(-10,-10,-15,-15));
+        challonge.setContentAreaFilled(false);
+        challonge.setToolTipText("Bracket");
+        listas.add(challonge);
+        listas.add(Box.createRigidArea(new Dimension(0,5)));
         
         getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
         getContentPane().add(listas);        
@@ -314,7 +333,8 @@ public class MainUI extends javax.swing.JFrame implements ActionListener {
     }
     
     @Override
-    public void actionPerformed(ActionEvent e) {        
+    public void actionPerformed(ActionEvent e) {
+        
         // Cogemos el identificador del setup
         String comando = e.getActionCommand();
         String strSetup = comando.substring(6);
